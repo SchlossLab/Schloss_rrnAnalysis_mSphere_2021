@@ -46,7 +46,7 @@ code/mothur/mothur "#pcr.seqs(fasta=data/raw/rrnDB-5.6_16S_rRNA.align, start=$st
 
 if [[ $? -eq 0 ]]
 then
-	sed "s/^\.*/-/" $path/rrnDB-5.6_16S_rRNA.pcr.filter.fasta > $path/rrnDB-5.6_16S_rRNA.pcr.filter.test.fasta
+	sed "s/^\.+/-/" $path/rrnDB-5.6_16S_rRNA.pcr.filter.fasta > $path/rrnDB-5.6_16S_rRNA.pcr.filter.test.fasta
 	touch $path/rrnDB-5.6_16S_rRNA.bad.accnos
 	touch $path/rrnDB-5.6_16S_rRNA.scrap.pcr.align
 else
