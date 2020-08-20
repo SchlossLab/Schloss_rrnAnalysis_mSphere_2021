@@ -33,7 +33,8 @@ data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
 	code/extract_region.sh $@
 
 
-data/%/rrnDB.unique.align data/%/rrnDB.count_table : code/count_unique_seqs.sh\
+data/%/rrnDB.unique.align data/%/rrnDB.count_tibble : code/count_unique_seqs.sh\
+											code/convert_count_table_to_tibble.R\
 											data/%/rrnDB.align\
 											code/mothur/mothur
 	code/count_unique_seqs.sh $@
