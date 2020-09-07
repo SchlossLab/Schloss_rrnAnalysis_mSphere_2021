@@ -20,3 +20,6 @@ Developed over a series of *Code Club* episodes led by Pat Schloss to answer an 
 ### Dependencies:  
 * [mothur v.1.44.2](https://github.com/mothur/mothur/tree/v.1.44.2) - `code/install_mothur.sh` installs mothur
 * `wget`
+* `R` (v. 4.0.2)
+  * `tidyverse` (v. 1.3.0)
+  * `data.table` (v. 1.13.0)
