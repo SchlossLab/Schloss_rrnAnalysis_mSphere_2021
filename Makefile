@@ -42,3 +42,9 @@ data/%/rrnDB.unique.align data/%/rrnDB.count_tibble : code/count_unique_seqs.sh\
 
 README.md : README.Rmd
 	R -e "library(rmarkdown); render('README.Rmd')"
+
+
+
+exploratory/2020-09-09-genome-sens-spec.md : exploratory/2020-09-09-genome-sens-spec.Rmd\
+		data/v19/rrnDB.count_tibble data/v4/rrnDB.count_tibble
+	R -e "library(rmarkdown); render('exploratory/2020-09-09-genome-sens-spec.Rmd')"
