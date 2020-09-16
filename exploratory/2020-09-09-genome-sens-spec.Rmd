@@ -5,6 +5,8 @@ date: "9/9/2020"
 output:
   github_document:
     html_preview: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, message=FALSE}
@@ -17,20 +19,23 @@ library(here)
 Our analysis will use full length sequences
 
 ```{r}
-fl <- read_tsv(here("data/v19/rrnDB.count_tibble"))
+count_tibble <- read_tsv(here("data/processed/rrnDB.count_tibble"),
+												 col_types = "cccd")
 ```
 
 We want to count and plot the number of copies per genome
 
 ```{r n_rrn}
-fl %>%
+count_tibble %>%
+	filter(region == "v19") %>%
 	group_by(genome) %>%
 	summarize(n_rrn = sum(count), .groups="drop") %>%
 	ggplot(aes(x=n_rrn)) + geom_histogram(binwidth=1)
 
-fl %>%
+count_tibble %>%
+	filter(region == "v19") %>%
 	group_by(genome) %>%
-	summarize(n_rrn = sum(count), .groups="drop") %>%
+	summarize(n_rrn = sum(count)) %>%
 	count(n_rrn) %>%
 	mutate(fraction = n / sum(n))
 ```
@@ -43,21 +48,23 @@ We see that most genomes actually have more than one copy of the *rrn* operon. I
 Considering most genomes have multiple copes of the *rrn* operon, we need to know whether they all have the same ASV. Otherwise we run the risk of splitting a single genome into multiple ASVs.
 
 ```{r}
-fl %>% 
-	group_by(genome) %>%
+count_tibble %>% 
+	group_by(region, genome) %>%
 	summarize(n_asv = n(), n_rrn = sum(count), .groups="drop") %>%
-	group_by(n_rrn) %>%
+	group_by(region, n_rrn) %>%
 	summarize(med_n_asv = median(n_asv),
+						mean_n_asv = mean(n_asv),
 						lq_n_asv = quantile(n_asv, prob=0.25),
-						uq_n_asv = quantile(n_asv, prob=0.75))
+						uq_n_asv = quantile(n_asv, prob=0.75)) %>%
+	filter(n_rrn == 7)
 
-fl %>% 
-	group_by(genome) %>%
+count_tibble %>% 
+	group_by(region, genome) %>%
 	summarize(n_asv = n(), n_rrn = sum(count), .groups="drop") %>%
-	ggplot(aes(x=n_rrn, y=n_asv)) + geom_smooth(method="lm")
+	ggplot(aes(x=n_rrn, y=n_asv, color=region)) + geom_smooth(method="lm")
 ```
 
-Surprisingly (or not!) the number of ASVs increases at a rate of about 2 ASVs per 3 copies of *rrn* operon in the genome.
+Surprisingly (or not!) the number of ASVs increases at a rate of about 2 ASVs per 3 copies of *rrn* operon in the genome. The sub regions of the 16S rRNA region have few ASVs per *rrn* operon.
 
 
 ### Determine whether an ASV is unique to genomes they're found in
@@ -65,50 +72,16 @@ Surprisingly (or not!) the number of ASVs increases at a rate of about 2 ASVs pe
 Instead of looking at the number of ASVs per genome, we want to see the number of genomes per ASV.
 
 ```{r}
-fl %>%
-	group_by(asv) %>%
+count_tibble %>%
+	group_by(region, asv) %>%
 	summarize(n_genomes = n()) %>%
 	count(n_genomes) %>%
-	mutate(fraction = n/sum(n))
+	mutate(fraction = n/sum(n)) %>%
+	filter(n_genomes == 1)
 ```
 
-We see that will full length sequences, that 82% of the ASVs were unique to a genome.
+We see that will full length sequences, that 82% of the ASVs were unique to a genome. For the subregions, about 76% of the ASVs were unique to a genome.
 
-
-### Does the sensitivity and specificity change if we look at a shorter region of the gene?
-
-We know that the V4 region is less diverse than the full length sequence. So does the number of ASVs per genome differ than for full length sequences? Are ASVs as specific when using the V4 region compared to full length sequences?
-
-```{r}
-v_four <- read_tsv(here("data/v4/rrnDB.count_tibble"))
-
-v_four %>% 
-	group_by(genome) %>%
-	summarize(n_asv = n(), n_rrn = sum(count), .groups="drop") %>%
-	group_by(n_rrn) %>%
-	summarize(mean_n_asv = mean(n_asv),
-						lq_n_asv = quantile(n_asv, prob=0.25),
-						uq_n_asv = quantile(n_asv, prob=0.75))
-
-v_four %>% 
-	group_by(genome) %>%
-	summarize(n_asv = n(), n_rrn = sum(count), .groups="drop") %>%
-	ggplot(aes(x=n_rrn, y=n_asv)) + geom_smooth(method="lm")
-```
-
-The number of ASVs per copy of *rrn* operon is lower than for full length sequences. We find 1.5 ASV per 10 copies of the *rrn* operon.
-
-Next, let's look at the specificity of an ASV for a genome
-
-```{r}
-v_four %>%
-	group_by(asv) %>%
-	summarize(n_genomes = n()) %>%
-	count(n_genomes) %>%
-	mutate(fraction = n/sum(n))
-```
-
-We find that about 76% of ASVs using the V4 region were specific to a genome.
 
 
 ### To be determined...
