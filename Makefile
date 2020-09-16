@@ -53,5 +53,5 @@ README.md : README.Rmd
 
 
 exploratory/2020-09-09-genome-sens-spec.md : exploratory/2020-09-09-genome-sens-spec.Rmd\
-		data/v19/rrnDB.count_tibble data/v4/rrnDB.count_tibble
+		data/processed/rrnDB.count_tibble
 	R -e "library(rmarkdown); render('exploratory/2020-09-09-genome-sens-spec.Rmd')"
