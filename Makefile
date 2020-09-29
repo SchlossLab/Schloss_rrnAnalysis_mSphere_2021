@@ -66,3 +66,9 @@ README.md : README.Rmd
 exploratory/2020-09-09-genome-sens-spec.md : exploratory/2020-09-09-genome-sens-spec.Rmd\
 		data/processed/rrnDB.count_tibble
 	R -e "library(rmarkdown); render('exploratory/2020-09-09-genome-sens-spec.Rmd')"
+
+
+exploratory/2020-09-29-taxa-representation.md : exploratory/2020-09-29-taxa-representation.Rmd\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.count_tibble
+	R -e "library(rmarkdown); render('exploratory/2020-09-29-taxa-representation.Rmd')"
