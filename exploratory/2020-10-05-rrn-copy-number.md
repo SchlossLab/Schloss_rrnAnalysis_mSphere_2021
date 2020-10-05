@@ -47,8 +47,8 @@ number of genomes in each species.
         theme_classic() +
         labs(x=NULL, 
                  y="Mean number of rrn copies per genome",
-                 title="There is wide variation at the species\nlevel in the number of rrn copies",
-                 subtitle="Each point represents a single taxon\nwithin that rank, numbers based on\nan average species copy number")
+                 title="There is wide variation at the species level in the number of rrn copies",
+                 subtitle="Each point represents a single taxon within that rank, numbers based on\nan average species copy number")
 
 ![](2020-10-05-rrn-copy-number_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 

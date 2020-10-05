@@ -53,8 +53,8 @@ rank_taxon_rrns %>%
 	theme_classic() +
 	labs(x=NULL, 
 			 y="Mean number of rrn copies per genome",
-			 title="There is wide variation at the species\nlevel in the number of rrn copies",
-			 subtitle="Each point represents a single taxon\nwithin that rank, numbers based on\nan average species copy number")
+			 title="There is wide variation at the species level in the number of rrn copies",
+			 subtitle="Each point represents a single taxon within that rank, numbers based on\nan average species copy number")
 ```
 
 * Bacteria have more copies than Archaea
