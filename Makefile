@@ -72,3 +72,9 @@ exploratory/2020-09-29-taxa-representation.md : exploratory/2020-09-29-taxa-repr
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.count_tibble
 	R -e "library(rmarkdown); render('exploratory/2020-09-29-taxa-representation.Rmd')"
+
+
+exploratory/2020-10-05-rrn-copy-number.md : exploratory/2020-10-05-rrn-copy-number.Rmd\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.count_tibble
+	R -e "library(rmarkdown); render('exploratory/2020-10-05-rrn-copy-number.Rmd')"
