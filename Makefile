@@ -78,3 +78,10 @@ exploratory/2020-10-05-rrn-copy-number.md : exploratory/2020-10-05-rrn-copy-numb
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.count_tibble
 	R -e "library(rmarkdown); render('exploratory/2020-10-05-rrn-copy-number.Rmd')"
+
+
+
+exploratory/2020-10-15-asv-species-coverage.md : exploratory/2020-10-15-asv-species-coverage.Rmd\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.count_tibble
+	R -e "library(rmarkdown); render('exploratory/2020-10-15-asv-species-coverage.Rmd')"
