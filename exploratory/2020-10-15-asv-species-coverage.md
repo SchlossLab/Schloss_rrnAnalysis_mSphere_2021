@@ -1,9 +1,10 @@
 Quantifying the coverage of ASVs within a species
 ================
 Pat Schloss
-10/05/2020
+10/15/2020
 
     library(tidyverse)
+    library(knitr)
     library(here)
 
     metadata <- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
@@ -39,10 +40,11 @@ at the V4, V3-V4, and V4-V5 regions.
     # each facet represents a different region
 
     species_asvs <- metadata_asv %>% 
-        select(genome_id, species, region, asv) %>%
+        select(genome_id, species, region, asv, count) %>%
         group_by(region, species) %>%
         summarize(n_genomes = n_distinct(genome_id),
                             n_asvs = n_distinct(asv),
+                            n_rrns = sum(count) / n_genomes,
                             asv_rate = n_asvs/n_genomes,
                             .groups="drop")
 
@@ -65,6 +67,39 @@ at the V4, V3-V4, and V4-V5 regions.
     ## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
 
 ![](2020-10-15-asv-species-coverage_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+    # species name, number of genomes, average number of rrns, number of ASVs across
+    # genomes for each region of 16S rRNA gene
+
+    count_table <- species_asvs %>%
+        select(species, region, n_genomes, n_rrns, n_asvs) %>%  
+        group_by(species) %>%
+        mutate(n_genomes = max(n_genomes),
+                     n_rrns = max(n_rrns)) %>%
+        ungroup() %>% 
+        pivot_wider(names_from=region, values_from=n_asvs) %>% 
+        arrange(species)
+
+    #see also kableExtra
+    count_table %>%
+        arrange(desc(n_genomes)) %>%
+        top_n(n_genomes, n=10) %>%
+        kable(caption = "Ten most commonly sequence species", digits=2)
+
+| species                    | n\_genomes | n\_rrns |  v19 | v34 |  v4 | v45 |
+|:---------------------------|-----------:|--------:|-----:|----:|----:|----:|
+| Escherichia coli           |        958 |    7.02 | 1013 | 256 | 183 | 230 |
+| Salmonella enterica        |        781 |    6.99 |  937 | 243 | 156 | 217 |
+| Bordetella pertussis       |        552 |    3.00 |   31 |  11 |   6 |  10 |
+| Staphylococcus aureus      |        452 |    5.52 |  423 |  95 |  52 |  87 |
+| Klebsiella pneumoniae      |        381 |    8.00 |  548 | 194 | 100 | 137 |
+| Pseudomonas aeruginosa     |        202 |    4.00 |   97 |  31 |  21 |  30 |
+| Streptococcus pyogenes     |        199 |    5.93 |   73 |  23 |  13 |  14 |
+| Listeria monocytogenes     |        190 |    5.66 |   78 |  19 |  12 |  19 |
+| Mycobacterium tuberculosis |        180 |    1.00 |   11 |   5 |   3 |   3 |
+| Campylobacter jejuni       |        174 |    2.24 |   28 |   7 |   6 |   8 |
+
+Ten most commonly sequence species
 
 ### Conclusions
 

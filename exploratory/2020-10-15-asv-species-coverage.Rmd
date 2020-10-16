@@ -1,7 +1,7 @@
 ---
 title: "Quantifying the coverage of ASVs within a species"
 author: "Pat Schloss"
-date: "10/05/2020"
+date: "10/15/2020"
 output:
   github_document:
     html_preview: false
@@ -11,6 +11,7 @@ editor_options:
 
 ```{r, message=FALSE}
 library(tidyverse)
+library(knitr)
 library(here)
 
 metadata <- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
@@ -39,10 +40,11 @@ We've previously seen that the number of ASVs per copy of the 16S rRNA gene is a
 # each facet represents a different region
 
 species_asvs <- metadata_asv %>% 
-	select(genome_id, species, region, asv) %>%
+	select(genome_id, species, region, asv, count) %>%
 	group_by(region, species) %>%
 	summarize(n_genomes = n_distinct(genome_id),
 						n_asvs = n_distinct(asv),
+						n_rrns = sum(count) / n_genomes,
 						asv_rate = n_asvs/n_genomes,
 						.groups="drop")
 
@@ -62,6 +64,30 @@ species_asvs %>%
 	scale_y_log10() +
 	theme_classic()
 ```
+
+
+
+```{r}
+# species name, number of genomes, average number of rrns, number of ASVs across
+# genomes for each region of 16S rRNA gene
+
+count_table <- species_asvs %>%
+	select(species, region, n_genomes, n_rrns, n_asvs) %>%	
+	group_by(species) %>%
+	mutate(n_genomes = max(n_genomes),
+				 n_rrns = max(n_rrns)) %>%
+	ungroup() %>% 
+	pivot_wider(names_from=region, values_from=n_asvs) %>% 
+	arrange(species)
+
+#see also kableExtra
+count_table %>%
+	arrange(desc(n_genomes)) %>%
+	top_n(n_genomes, n=10) %>%
+	kable(caption = "Ten most commonly sequence species", digits=2)
+```
+
+
 
 ### Conclusions
 
