@@ -85,3 +85,8 @@ exploratory/2020-10-15-asv-species-coverage.md : exploratory/2020-10-15-asv-spec
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.count_tibble
 	R -e "library(rmarkdown); render('exploratory/2020-10-15-asv-species-coverage.Rmd')"
+
+exploratory/2020-10-21-asv-taxa-overlap.md : exploratory/2020-10-21-asv-taxa-overlap.Rmd\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.count_tibble
+	R -e "library(rmarkdown); render('exploratory/2020-10-21-asv-taxa-overlap.Rmd')"
