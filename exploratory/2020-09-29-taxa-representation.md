@@ -11,23 +11,23 @@ Pat Schloss
         mutate(strain = if_else(scientific_name == species,
                                                         NA_character_,
                                                         scientific_name)) %>%
-        select(-scientific_name) %>% 
+        select(-scientific_name) %>%
         pivot_longer(-genome_id, names_to="rank", values_to="taxon") %>%
         drop_na(taxon) %>%
         mutate(rank = factor(rank,
                                                  levels=c("kingdom", "phylum", "class", "order",
                                                                  "family", "genus", "species", "strain")))
 
-    asv <- read_tsv(here("data/processed/rrnDB.count_tibble"),
+    esv <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
                                     col_types = cols(.default = col_character(),
                                                                      count = col_integer()))
 
-    metadata_asv <- inner_join(metadata, asv, by=c("genome_id" = "genome"))
+    metadata_esv <- inner_join(metadata, esv, by=c("genome_id" = "genome"))
 
 ### Find the number of taxa within each taxonomic rank
 
-    n_taxa_per_rank <- metadata_asv %>%
-        filter(region == "v19") %>% 
+    n_taxa_per_rank <- metadata_esv %>%
+        filter(region == "v19") %>%
         group_by(rank, taxon) %>%
         summarize(N = n_distinct(genome_id)) %>%
         summarize(n_1 = n_distinct(taxon),
@@ -45,9 +45,9 @@ Pat Schloss
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
-    n_taxa_per_rank %>% 
+    n_taxa_per_rank %>%
         ggplot(aes(x=rank, y=n_taxa, group=n_genomes, color=n_genomes)) +
-            geom_line() + 
+            geom_line() +
             theme_classic()
 
 ![](2020-09-29-taxa-representation_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->

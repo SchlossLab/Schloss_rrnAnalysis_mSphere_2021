@@ -1,4 +1,4 @@
-Quantifying the dominance and commoness of ASVs
+Quantifying the dominance and commoness of ESVs
 ================
 Pat Schloss
 11/02/2020
@@ -14,26 +14,26 @@ Pat Schloss
                                                         scientific_name)) %>%
         select(-scientific_name)
 
-    asv <- read_tsv(here("data/processed/rrnDB.count_tibble"),
+    esv <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
                                     col_types = cols(.default = col_character(),
                                                                      count = col_integer()))
 
-    metadata_asv <- inner_join(metadata, asv, by=c("genome_id" = "genome"))
+    metadata_esv <- inner_join(metadata, esv, by=c("genome_id" = "genome"))
 
-maybe there are many ASVs but only a handful of them are dominant?
+maybe there are many ESVs but only a handful of them are dominant?
 
     # want the number of genomes and average number of 16S rRNA gene (rrn) copies per
     # genome for each species
 
-    n_genomes_rrn_copies_per_species <- 
-        metadata_asv %>%
+    n_genomes_rrn_copies_per_species <-
+        metadata_esv %>%
         # need the counts by region and by genome for each species
-      select(region, genome_id, species, asv, count) %>%
-        # group our ASVs by region and species
+      select(region, genome_id, species, esv, count) %>%
+        # group our ESVs by region and species
       group_by(region, species) %>%
       summarize(
         # number of distinct genomes per region/species
-        n_genomes = n_distinct(genome_id), 
+        n_genomes = n_distinct(genome_id),
         # summing up the number of 16S rRNA copies across all genomes for
         # a species and region and divide by number of genomes
         mean_rrns = sum(count) / n_genomes,
@@ -41,32 +41,32 @@ maybe there are many ASVs but only a handful of them are dominant?
       )
 
     # set the minimum number of genomes per species
-    min_n_genomes_per_species <- 5 
+    min_n_genomes_per_species <- 5
 
-    # What percentage of genomes have an ASV? This focuses on the most
-    # common ASV for each species. Dominance is the percentage of genomes that an
-    # ASV is found in. So if a ASV shows up in 20 of 25 genomes for a species, it
+    # What percentage of genomes have an ESV? This focuses on the most
+    # common ESV for each species. Dominance is the percentage of genomes that an
+    # ESV is found in. So if a ESV shows up in 20 of 25 genomes for a species, it
     # dominance is 0.80.
 
-    asv_dominance_per_species <- 
-        
-        metadata_asv %>%
-        
-        # want to do our analysis for the species level for each region of 16S will
-        # want to group our genomes by ASVs and species to count the number of genomes
-        # that each ASV appears in
-      select(region, genome_id, species, asv, count) %>%
-      group_by(region, species, asv) %>%
+    esv_dominance_per_species <-
 
-        # count the number of genomes that each ASV appears in for region and species
+        metadata_esv %>%
+
+        # want to do our analysis for the species level for each region of 16S will
+        # want to group our genomes by ESVs and species to count the number of genomes
+        # that each ESV appears in
+      select(region, genome_id, species, esv, count) %>%
+      group_by(region, species, esv) %>%
+
+        # count the number of genomes that each ESV appears in for region and species
         summarize(n_genomes_found = n_distinct(genome_id), .groups="drop") %>%
-        
+
         # bring in the number of genomes and rrn copies per species so we can scale
-        # our number of genomes that each ASV appeared in to get percent dominance
+        # our number of genomes that each ESV appeared in to get percent dominance
       inner_join(., n_genomes_rrn_copies_per_species, by=c("region", "species")) %>%
       mutate(dominance = n_genomes_found / n_genomes) %>%
-        
-        # want the dominant ASV for each region and species
+
+        # want the dominant ESV for each region and species
         # want the number of genomes for each species and region so that we can filter
         #   our data to focus on those species with more genomes than the value of
         #   threshold
@@ -78,16 +78,16 @@ maybe there are many ASVs but only a handful of them are dominant?
         ) %>%
       filter(n_genomes >= min_n_genomes_per_species)
 
-    asv_dominance_per_species %>%
+    esv_dominance_per_species %>%
       ggplot(aes(x=max_dominance, fill=region)) +
         geom_histogram(binwidth=0.05) +
         facet_wrap(facet="region") +
-            labs(y="Number of species", x="Dominance of ASV per species")
+            labs(y="Number of species", x="Dominance of ESV per species")
 
-![](2020-11-02-dominance-commonness-of-asvs_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](2020-11-02-dominance-commonness-of-esvs_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
     # what percentage of species have a max dominance over 80%
-    asv_dominance_per_species %>%
+    esv_dominance_per_species %>%
         group_by(region) %>%
       summarize(fraction = sum(max_dominance > 0.80)/n())
 
@@ -101,26 +101,26 @@ maybe there are many ASVs but only a handful of them are dominant?
     ## 3 v4        0.813
     ## 4 v45       0.744
 
-    asv_commonness_per_species <- metadata_asv %>%
-        
-        # want to do our analysis for the species level for each region of 16S will
-        # want to group our genomes by ASVs and species to count the number of genomes
-        # that each ASV appears in
-      select(region, genome_id, species, asv, count) %>%
-      group_by(region, species, asv) %>%
+    esv_commonness_per_species <- metadata_esv %>%
 
-        # instead of counting the number of genoems an ASV is found in, I want to
-        # count the total number of times each ASV appears across the genomes within
+        # want to do our analysis for the species level for each region of 16S will
+        # want to group our genomes by ESVs and species to count the number of genomes
+        # that each ESV appears in
+      select(region, genome_id, species, esv, count) %>%
+      group_by(region, species, esv) %>%
+
+        # instead of counting the number of genoems an ESV is found in, I want to
+        # count the total number of times each ESV appears across the genomes within
         # a species
-        summarize(n_asvs = sum(count), .groups="drop") %>%
-        
+        summarize(n_esvs = sum(count), .groups="drop") %>%
+
         # bring in the number of genomes and rrn copies per species so we can scale
-        # our number of times that each ASV appeared in each species to get percent
+        # our number of times that each ESV appeared in each species to get percent
         # commonness
       inner_join(., n_genomes_rrn_copies_per_species, by=c("region", "species")) %>%
-      mutate(commonness = n_asvs/n_genomes/mean_rrns) %>%
-        
-        # want the most common ASV for each region and species
+      mutate(commonness = n_esvs/n_genomes/mean_rrns) %>%
+
+        # want the most common ESV for each region and species
         # want the number of genomes for each species and region so that we can filter
         #   our data to focus on those species with more genomes than the value of
         #   threshold
@@ -129,17 +129,17 @@ maybe there are many ASVs but only a handful of them are dominant?
         max_commonness = max(commonness),
         .groups="drop") %>%
       filter(n_genomes >= min_n_genomes_per_species)
-      
-    asv_commonness_per_species %>%
+
+    esv_commonness_per_species %>%
       ggplot(aes(x=max_commonness, fill=region)) +
         geom_histogram(binwidth=0.05) +
-        facet_wrap(facet="region") + 
-            labs(y="Number of species", x="Commonness of ASV per species")
+        facet_wrap(facet="region") +
+            labs(y="Number of species", x="Commonness of ESV per species")
 
-![](2020-11-02-dominance-commonness-of-asvs_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](2020-11-02-dominance-commonness-of-esvs_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-    # what percentage of species have an ASV that has a commonness over 80%
-    asv_commonness_per_species %>%
+    # what percentage of species have an ESV that has a commonness over 80%
+    esv_commonness_per_species %>%
       group_by(region) %>%
       summarize(fraction = sum(max_commonness > 0.80)/n())
 
@@ -155,11 +155,11 @@ maybe there are many ASVs but only a handful of them are dominant?
 
 ### Conclusions…
 
--   Among the sub-regions, a majority of species have an ASV that is
+-   Among the sub-regions, a majority of species have an ESV that is
     found in more than 80% of the genomes. For full length sequences,
-    only 25% of ASVs are found across more than 80% of the genomes
--   The most common ASVs (i.e. more than 80% of the rrn copies) account
+    only 25% of ESVs are found across more than 80% of the genomes
+-   The most common ESVs (i.e. more than 80% of the rrn copies) account
     for 46-74% of the genomes in the sub-regions and only 12% for the
-    full length ASVs
--   Underscores the problem that a single ASV is unlikely to be
-    representative of the diversity of ASVs within the species
+    full length ESVs
+-   Underscores the problem that a single ESV is unlikely to be
+    representative of the diversity of ESVs within the species

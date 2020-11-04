@@ -1,3 +1,5 @@
+.SECONDARY:
+
 # Rule
 # target : prerequisite1 prerequisite2 prerequisite3
 #	(tab)recipe
@@ -44,54 +46,34 @@ data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
 	code/extract_region.sh $@
 
 
-data/%/rrnDB.unique.align data/%/rrnDB.count_tibble : code/count_unique_seqs.sh\
+data/%/rrnDB.unique.align data/%/rrnDB.esv.count_tibble : code/count_unique_seqs.sh\
 											code/convert_count_table_to_tibble.R\
 											data/%/rrnDB.align\
 											code/mothur/mothur
 	code/count_unique_seqs.sh $@
 
-data/processed/rrnDB.count_tibble : code/combine_count_tibble_files.R\
-		data/v19/rrnDB.count_tibble\
-		data/v4/rrnDB.count_tibble\
-		data/v34/rrnDB.count_tibble\
-		data/v45/rrnDB.count_tibble
+data/processed/rrnDB.esv.count_tibble : code/combine_count_tibble_files.R\
+		data/v19/rrnDB.esv.count_tibble\
+		data/v4/rrnDB.esv.count_tibble\
+		data/v34/rrnDB.esv.count_tibble\
+		data/v45/rrnDB.esv.count_tibble
 	$^
 
 
 README.md : README.Rmd
 	R -e "library(rmarkdown); render('README.Rmd')"
 
-
-
-exploratory/2020-09-09-genome-sens-spec.md : exploratory/2020-09-09-genome-sens-spec.Rmd\
-		data/processed/rrnDB.count_tibble
-	R -e "library(rmarkdown); render('exploratory/2020-09-09-genome-sens-spec.Rmd')"
-
-
-exploratory/2020-09-29-taxa-representation.md : exploratory/2020-09-29-taxa-representation.Rmd\
+%.md : %.Rmd\
 		data/references/genome_id_taxonomy.tsv\
-		data/processed/rrnDB.count_tibble
-	R -e "library(rmarkdown); render('exploratory/2020-09-29-taxa-representation.Rmd')"
+		data/processed/rrnDB.esv.count_tibble
+	R -e "library(rmarkdown); render('$<')"
 
 
-exploratory/2020-10-05-rrn-copy-number.md : exploratory/2020-10-05-rrn-copy-number.Rmd\
-		data/references/genome_id_taxonomy.tsv\
-		data/processed/rrnDB.count_tibble
-	R -e "library(rmarkdown); render('exploratory/2020-10-05-rrn-copy-number.Rmd')"
-
-
-
-exploratory/2020-10-15-asv-species-coverage.md : exploratory/2020-10-15-asv-species-coverage.Rmd\
-		data/references/genome_id_taxonomy.tsv\
-		data/processed/rrnDB.count_tibble
-	R -e "library(rmarkdown); render('exploratory/2020-10-15-asv-species-coverage.Rmd')"
-
-exploratory/2020-10-21-asv-taxa-overlap.md : exploratory/2020-10-21-asv-taxa-overlap.Rmd\
-		data/references/genome_id_taxonomy.tsv\
-		data/processed/rrnDB.count_tibble
-	R -e "library(rmarkdown); render('exploratory/2020-10-21-asv-taxa-overlap.Rmd')"
-
-exploratory/2020-11-02-dominance-commonness-of-asvs.md: exploratory/2020-11-02-dominance-commonness-of-asvs.Rmd\
-		data/references/genome_id_taxonomy.tsv\
-		data/processed/rrnDB.count_tibble
-	R -e "library(rmarkdown); render('exploratory/2020-11-02-dominance-commonness-of-asvs.Rmd')"
+.PHONY:
+exploratory : \
+		exploratory/2020-09-09-genome-sens-spec.md\
+		exploratory/2020-09-29-taxa-representation.md\
+		exploratory/2020-10-05-rrn-copy-number.md\
+		exploratory/2020-10-15-esv-species-coverage.md\
+		exploratory/2020-10-21-esv-taxa-overlap.md\
+		exploratory/2020-11-02-dominance-commonness-of-esvs.md

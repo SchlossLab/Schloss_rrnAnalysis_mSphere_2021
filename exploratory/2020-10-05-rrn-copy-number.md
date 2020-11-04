@@ -13,11 +13,11 @@ Pat Schloss
                                                         scientific_name)) %>%
         select(-scientific_name)
 
-    asv <- read_tsv(here("data/processed/rrnDB.count_tibble"),
+    esv <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
                                     col_types = cols(.default = col_character(),
                                                                      count = col_integer()))
 
-    metadata_asv <- inner_join(metadata, asv, by=c("genome_id" = "genome"))
+    metadata_esv <- inner_join(metadata, esv, by=c("genome_id" = "genome"))
 
 ### Plot the number of *rrn* copies per taxonomic rank
 
@@ -27,12 +27,12 @@ averages of each taxonomic group, we should first get an average number
 of copies for each species. This will allow us to control for uneven
 number of genomes in each species.
 
-    rank_taxon_rrns <- metadata_asv %>%
+    rank_taxon_rrns <- metadata_esv %>%
         filter(region == "v19") %>%
         group_by(kingdom, phylum, class, order, family, genus, species, genome_id) %>%
-        summarize(n_rrns = sum(count), .groups="drop") %>% 
+        summarize(n_rrns = sum(count), .groups="drop") %>%
         group_by(kingdom, phylum, class, order, family, genus, species) %>%
-        summarize(mean_rrns = mean(n_rrns), .groups="drop") %>% 
+        summarize(mean_rrns = mean(n_rrns), .groups="drop") %>%
         pivot_longer(-mean_rrns, names_to="rank", values_to="taxon") %>%
         drop_na(taxon) %>%
         mutate(rank = factor(rank,
@@ -46,18 +46,18 @@ number of genomes in each species.
         summarize(median_mean_rrns = median(mean_rrns), .groups="drop")
 
     jitter_width <- 0.3
-    n_ranks <- nrow(median_of_means) 
-        
+    n_ranks <- nrow(median_of_means)
+
     rank_taxon_rrns %>%
-        ggplot(aes(x=rank, y=mean_rrns)) + 
+        ggplot(aes(x=rank, y=mean_rrns)) +
         geom_jitter(width=jitter_width, color="gray") +
         geom_segment(data=median_of_means,
                                  aes(x=1:n_ranks-jitter_width, xend=1:n_ranks+jitter_width,
                                         y=median_mean_rrns, yend=median_mean_rrns),
                              color="red", group=1, size=2, lineend="round",
-                             inherit.aes=FALSE) + 
+                             inherit.aes=FALSE) +
         theme_classic() +
-        labs(x=NULL, 
+        labs(x=NULL,
                  y="Mean number of rrn copies per genome",
                  title="There is wide variation at the species level in the number of rrn copies",
                  subtitle="Each point represents a single taxon within that rank, numbers based on\nan average species copy number") +
@@ -71,11 +71,11 @@ Here’s another way of looking at the data…
     library(ggridges)
 
     rank_taxon_rrns %>%
-        ggplot(aes(y=rank, x=mean_rrns)) + 
+        ggplot(aes(y=rank, x=mean_rrns)) +
         geom_density_ridges(stat="binline", binwidth=1, scale=0.9) +
         geom_point(data=median_of_means, aes(x=median_mean_rrns, y=1:n_ranks+0.1)) +
         theme_classic() +
-        labs(y=NULL, 
+        labs(y=NULL,
                  x="Mean number of rrn copies per genome",
                  title="The distribution of rrn copies per genome is pretty consistent across ranks",
                  subtitle="Each point represents a single taxon within that rank, numbers based on\nan average species copy number. The dot represents the median for the rank") +

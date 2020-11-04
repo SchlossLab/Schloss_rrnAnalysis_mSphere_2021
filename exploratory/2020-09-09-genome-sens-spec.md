@@ -1,4 +1,4 @@
-Analyzing the sensitivity and specificity of ASVs for discriminating
+Analyzing the sensitivity and specificity of ESVs for discriminating
 between genomes
 ================
 Pat Schloss
@@ -11,7 +11,7 @@ Pat Schloss
 
 Our analysis will use full length sequences
 
-    count_tibble <- read_tsv(here("data/processed/rrnDB.count_tibble"),
+    count_tibble <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
                                                      col_types = "cccd")
 
 We want to count and plot the number of copies per genome
@@ -59,55 +59,55 @@ We want to count and plot the number of copies per genome
 
 We see that most genomes actually have more than one copy of the *rrn*
 operon. I wonder whether those different copies are the same sequence /
-ASV…
+ESV…
 
-### Determine number of ASVs per genome
+### Determine number of ESVs per genome
 
 Considering most genomes have multiple copes of the *rrn* operon, we
-need to know whether they all have the same ASV. Otherwise we run the
-risk of splitting a single genome into multiple ASVs.
+need to know whether they all have the same ESV. Otherwise we run the
+risk of splitting a single genome into multiple ESVs.
 
-    count_tibble %>% 
+    count_tibble %>%
         group_by(region, genome) %>%
-        summarize(n_asv = n(), n_rrn = sum(count), .groups="drop") %>%
+        summarize(n_esv = n(), n_rrn = sum(count), .groups="drop") %>%
         group_by(region, n_rrn) %>%
-        summarize(med_n_asv = median(n_asv),
-                            mean_n_asv = mean(n_asv),
-                            lq_n_asv = quantile(n_asv, prob=0.25),
-                            uq_n_asv = quantile(n_asv, prob=0.75)) %>%
+        summarize(med_n_esv = median(n_esv),
+                            mean_n_esv = mean(n_esv),
+                            lq_n_esv = quantile(n_esv, prob=0.25),
+                            uq_n_esv = quantile(n_esv, prob=0.75)) %>%
         filter(n_rrn == 7)
 
     ## `summarise()` regrouping output by 'region' (override with `.groups` argument)
 
     ## # A tibble: 4 x 6
     ## # Groups:   region [4]
-    ##   region n_rrn med_n_asv mean_n_asv lq_n_asv uq_n_asv
+    ##   region n_rrn med_n_esv mean_n_esv lq_n_esv uq_n_esv
     ##   <chr>  <dbl>     <dbl>      <dbl>    <dbl>    <dbl>
     ## 1 v19        7         5       4.51        3        6
     ## 2 v34        7         2       2.10        1        3
     ## 3 v4         7         1       1.48        1        2
     ## 4 v45        7         1       1.64        1        2
 
-    count_tibble %>% 
+    count_tibble %>%
         group_by(region, genome) %>%
-        summarize(n_asv = n(), n_rrn = sum(count), .groups="drop") %>%
-        ggplot(aes(x=n_rrn, y=n_asv, color=region)) + geom_smooth(method="lm")
+        summarize(n_esv = n(), n_rrn = sum(count), .groups="drop") %>%
+        ggplot(aes(x=n_rrn, y=n_esv, color=region)) + geom_smooth(method="lm")
 
     ## `geom_smooth()` using formula 'y ~ x'
 
 ![](2020-09-09-genome-sens-spec_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-Surprisingly (or not!) the number of ASVs increases at a rate of about 2
-ASVs per 3 copies of *rrn* operon in the genome. The sub regions of the
-16S rRNA region have few ASVs per *rrn* operon.
+Surprisingly (or not!) the number of ESVs increases at a rate of about 2
+ESVs per 3 copies of *rrn* operon in the genome. The sub regions of the
+16S rRNA region have few ESVs per *rrn* operon.
 
-### Determine whether an ASV is unique to genomes they’re found in
+### Determine whether an ESV is unique to genomes they’re found in
 
-Instead of looking at the number of ASVs per genome, we want to see the
-number of genomes per ASV.
+Instead of looking at the number of ESVs per genome, we want to see the
+number of genomes per ESV.
 
     count_tibble %>%
-        group_by(region, asv) %>%
+        group_by(region, esv) %>%
         summarize(n_genomes = n()) %>%
         count(n_genomes) %>%
         mutate(fraction = n/sum(n)) %>%
@@ -124,12 +124,12 @@ number of genomes per ASV.
     ## 3 v4             1  4592    0.759
     ## 4 v45            1  5717    0.778
 
-We see that will full length sequences, that 82% of the ASVs were unique
-to a genome. For the subregions, about 76% of the ASVs were unique to a
+We see that will full length sequences, that 82% of the ESVs were unique
+to a genome. For the subregions, about 76% of the ESVs were unique to a
 genome.
 
 ### To be determined…
 
 -   Can correct for over representation?
 -   Consider analysis at species, genus, family, etc. levels
--   Consider looking at more broad definition of an ASV
+-   Consider looking at more broad definition of an ESV
