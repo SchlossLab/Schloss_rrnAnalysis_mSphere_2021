@@ -46,11 +46,14 @@ data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
 	code/extract_region.sh $@
 
 
-data/%/rrnDB.unique.align data/%/rrnDB.esv.count_tibble : code/count_unique_seqs.sh\
-											code/convert_count_table_to_tibble.R\
+data/%/rrnDB.unique.align data/%/rrnDB.count_table : code/get_unique_seqs.sh\
 											data/%/rrnDB.align\
 											code/mothur/mothur
-	code/count_unique_seqs.sh $@
+	$< $@
+
+data/%/rrnDB.esv.count_tibble : code/get_esv.R\
+		data/%/rrnDB.count_table
+	$^ $@
 
 data/processed/rrnDB.esv.count_tibble : code/combine_count_tibble_files.R\
 		data/v19/rrnDB.esv.count_tibble\
@@ -58,6 +61,15 @@ data/processed/rrnDB.esv.count_tibble : code/combine_count_tibble_files.R\
 		data/v34/rrnDB.esv.count_tibble\
 		data/v45/rrnDB.esv.count_tibble
 	$^
+
+data/%/rrnDB.unique.dist : code/get_distances.sh data/%/rrnDB.unique.align\
+		code/mothur/mothur
+	$< $@
+
+data/%/rrnDB.01.count_tibble : code/get_asvs.sh\
+		data/%/rrnDB.unique.dist data/%/rrnDB.count_table\
+		code/mothur/mothur
+	$< $@
 
 
 README.md : README.Rmd

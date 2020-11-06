@@ -8,7 +8,7 @@
 #
 # input: target - either the count_tibble or align file - also the output!
 
-TARGET=$1 # data/v19/rrnDB.unique.align
+TARGET=$1 # data/v4/rrnDB.unique.align
 
 STUB=`echo $TARGET | sed -E "s/(.*rrnDB).*/\1/"`
 STUB_TEMP=$STUB.temp
@@ -24,11 +24,9 @@ grep ">" $TEMP_ALIGN | sed -E "s/>((.*)\|.*\|.*)/\1 \2/" > $TEMP_GROUPS
 code/mothur/mothur "#unique.seqs(fasta=$TEMP_ALIGN);
 	count.seqs(group=$TEMP_GROUPS, compress=FALSE)"
 
-code/convert_count_table_to_tibble.R $STUB_TEMP.count_table $STUB.esv.count_tibble
-
 mv $STUB_TEMP.unique.align $STUB.unique.align
+mv $STUB_TEMP.count_table $STUB.count_table
 
-rm $STUB_TEMP.count_table
 rm $STUB_TEMP.names
 rm $STUB_TEMP.groups
 rm $STUB_TEMP.align
