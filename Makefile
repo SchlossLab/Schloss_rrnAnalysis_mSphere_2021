@@ -66,7 +66,7 @@ data/%/rrnDB.unique.dist : code/get_distances.sh data/%/rrnDB.unique.align\
 		code/mothur/mothur
 	$< $@
 
-data/%/rrnDB.01.count_tibble : code/get_asvs.sh\
+data/%/rrnDB.01.count_tibble : code/get_asvs.sh code/convert_shared_to_tibble.R\
 		data/%/rrnDB.unique.dist data/%/rrnDB.count_table\
 		code/mothur/mothur
 	$< $@

@@ -18,10 +18,10 @@ CUTOFF=0.$THRESHOLD
 code/mothur/mothur "#cluster(column=$DISTANCES, count=$COUNT, cutoff=$CUTOFF);
   make.shared()"
 
+code/convert_shared_to_tibble.R $STUB.unique.opti_mcc.shared $TARGET
 
 # Garbage collection
 rm $STUB.unique.opti_mcc.list
 rm $STUB.unique.opti_mcc.steps
 rm $STUB.unique.opti_mcc.sensspec
-
-#data/v4/rrnDB.unique.opti_mcc.shared
+rm $STUB.unique.opti_mcc.shared
