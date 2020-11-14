@@ -1,4 +1,11 @@
 .SECONDARY:
+.SECONDEXPANSION:
+
+REGIONS=v4 v34 v45 v19
+THRESHOLDS=001 002 003 004 005 008 01 015 02 025 03 04 05
+
+print-% :
+	@echo '$*=$($*)'
 
 # Rule
 # target : prerequisite1 prerequisite2 prerequisite3
@@ -51,9 +58,28 @@ data/%/rrnDB.unique.align data/%/rrnDB.count_table : code/get_unique_seqs.sh\
 											code/mothur/mothur
 	$< $@
 
-data/%/rrnDB.esv.count_tibble : code/get_esv.R\
-		data/%/rrnDB.count_table
+
+ESV_TIBBLES=$(foreach R,$(REGIONS),data/$(R)/rrnDB.esv.count_tibble)
+
+$(ESV_TIBBLES) : code/get_esvs.R\
+		$$(dir $$@)rrnDB.count_table
 	$^ $@
+
+
+data/%/rrnDB.unique.dist : code/get_distances.sh data/%/rrnDB.unique.align\
+		code/mothur/mothur
+	$< $@
+
+ASV_TIBBLES=$(foreach R,$(REGIONS),$(foreach T,$(THRESHOLDS),data/$(R)/rrnDB.$T.count_tibble))
+
+$(ASV_TIBBLES) : code/get_asvs.sh code/convert_shared_to_tibble.R\
+		$$(dir $$@)rrnDB.unique.dist $$(dir $$@)rrnDB.count_table\
+		code/mothur/mothur
+	$< $@
+
+EASV_TIBBLES=$(ESV_TIBBLES) $(ASV_TIBBLES)
+
+easv : $(EASV_TIBBLES)
 
 data/processed/rrnDB.esv.count_tibble : code/combine_count_tibble_files.R\
 		data/v19/rrnDB.esv.count_tibble\
@@ -61,15 +87,6 @@ data/processed/rrnDB.esv.count_tibble : code/combine_count_tibble_files.R\
 		data/v34/rrnDB.esv.count_tibble\
 		data/v45/rrnDB.esv.count_tibble
 	$^
-
-data/%/rrnDB.unique.dist : code/get_distances.sh data/%/rrnDB.unique.align\
-		code/mothur/mothur
-	$< $@
-
-data/%/rrnDB.01.count_tibble : code/get_asvs.sh code/convert_shared_to_tibble.R\
-		data/%/rrnDB.unique.dist data/%/rrnDB.count_table\
-		code/mothur/mothur
-	$< $@
 
 
 README.md : README.Rmd
