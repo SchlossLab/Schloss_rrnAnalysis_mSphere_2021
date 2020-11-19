@@ -13,9 +13,11 @@ Pat Schloss
                                                         scientific_name)) %>%
         select(-scientific_name)
 
-    esv <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
+    esv <- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
                                     col_types = cols(.default = col_character(),
-                                                                     count = col_integer()))
+                                                                     count = col_integer())) %>%
+        filter(threshold == "esv") %>%
+        select(-threshold)
 
     metadata_esv <- inner_join(metadata, esv, by=c("genome_id" = "genome"))
 

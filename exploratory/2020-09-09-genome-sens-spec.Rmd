@@ -19,8 +19,11 @@ library(here)
 Our analysis will use full length sequences
 
 ```{r}
-count_tibble <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-												 col_types = "cccd")
+count_tibble <- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+								col_types = cols(.default = col_character(),
+																 count = col_integer())) %>%
+	filter(threshold == "esv") %>%
+	select(-threshold)
 ```
 
 We want to count and plot the number of copies per genome
@@ -73,7 +76,7 @@ Instead of looking at the number of ESVs per genome, we want to see the number o
 
 ```{r}
 count_tibble %>%
-	group_by(region, esv) %>%
+	group_by(region, easv) %>%
 	summarize(n_genomes = n()) %>%
 	count(n_genomes) %>%
 	mutate(fraction = n/sum(n)) %>%

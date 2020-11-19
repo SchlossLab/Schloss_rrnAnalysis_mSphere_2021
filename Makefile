@@ -79,13 +79,8 @@ $(ASV_TIBBLES) : code/get_asvs.sh code/convert_shared_to_tibble.R\
 
 EASV_TIBBLES=$(ESV_TIBBLES) $(ASV_TIBBLES)
 
-easv : $(EASV_TIBBLES)
-
-data/processed/rrnDB.esv.count_tibble : code/combine_count_tibble_files.R\
-		data/v19/rrnDB.esv.count_tibble\
-		data/v4/rrnDB.esv.count_tibble\
-		data/v34/rrnDB.esv.count_tibble\
-		data/v45/rrnDB.esv.count_tibble
+data/processed/rrnDB.easv.count_tibble : code/combine_count_tibble_files.R\
+		$(EASV_TIBBLES)
 	$^
 
 
@@ -94,7 +89,7 @@ README.md : README.Rmd
 
 %.md : %.Rmd\
 		data/references/genome_id_taxonomy.tsv\
-		data/processed/rrnDB.esv.count_tibble
+		data/processed/rrnDB.easv.count_tibble
 	R -e "library(rmarkdown); render('$<')"
 
 

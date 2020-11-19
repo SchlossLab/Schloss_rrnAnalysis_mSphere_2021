@@ -11,8 +11,11 @@ Pat Schloss
 
 Our analysis will use full length sequences
 
-    count_tibble <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
-                                                     col_types = "cccd")
+    count_tibble <- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+                                    col_types = cols(.default = col_character(),
+                                                                     count = col_integer())) %>%
+        filter(threshold == "esv") %>%
+        select(-threshold)
 
 We want to count and plot the number of copies per genome
 
@@ -35,7 +38,7 @@ We want to count and plot the number of copies per genome
 
     ## # A tibble: 20 x 3
     ##    n_rrn     n  fraction
-    ##    <dbl> <int>     <dbl>
+    ##    <int> <int>     <dbl>
     ##  1     1  1566 0.102    
     ##  2     2  1740 0.113    
     ##  3     3  2143 0.139    
@@ -82,7 +85,7 @@ risk of splitting a single genome into multiple ESVs.
     ## # A tibble: 4 x 6
     ## # Groups:   region [4]
     ##   region n_rrn med_n_esv mean_n_esv lq_n_esv uq_n_esv
-    ##   <chr>  <dbl>     <dbl>      <dbl>    <dbl>    <dbl>
+    ##   <chr>  <int>     <dbl>      <dbl>    <dbl>    <dbl>
     ## 1 v19        7         5       4.51        3        6
     ## 2 v34        7         2       2.10        1        3
     ## 3 v4         7         1       1.48        1        2
@@ -107,7 +110,7 @@ Instead of looking at the number of ESVs per genome, we want to see the
 number of genomes per ESV.
 
     count_tibble %>%
-        group_by(region, esv) %>%
+        group_by(region, easv) %>%
         summarize(n_genomes = n()) %>%
         count(n_genomes) %>%
         mutate(fraction = n/sum(n)) %>%

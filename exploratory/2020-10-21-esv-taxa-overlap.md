@@ -14,9 +14,11 @@ Pat Schloss
                                                         scientific_name)) %>%
         select(-scientific_name)
 
-    esv <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
+    esv <- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
                                     col_types = cols(.default = col_character(),
-                                                                     count = col_integer()))
+                                                                     count = col_integer())) %>%
+        filter(threshold == "esv") %>%
+        select(-threshold)
 
     metadata_esv <- inner_join(metadata, esv, by=c("genome_id" = "genome"))
 
@@ -73,14 +75,14 @@ rank.
         # - focus on taxonomic ranks - kingdom to species, esv, and region
             select(-genome_id, -count, -strain) %>%
         # - make data frame tidy
-            pivot_longer(cols=c(-region, -esv), names_to="rank", values_to="taxon") %>%
+            pivot_longer(cols=c(-region, -easv), names_to="rank", values_to="taxon") %>%
         # - remove lines from the data where we don't have a taxonomy
             drop_na(taxon) %>%
         # - remove redundant lines
             distinct() %>%
         # for each region and taxonomic rank, group by esvs
-            group_by(region, rank, esv) %>%
-        # - for each esv - count the number of taxa
+            group_by(region, rank, easv) %>%
+        # - for each easv - count the number of taxa
             summarize(n_taxa = n(), .groups="drop_last") %>%
         # - count the number of esvs that appear in more than one taxa
             count(n_taxa) %>%

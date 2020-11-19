@@ -14,9 +14,11 @@ Pat Schloss
                                                         scientific_name)) %>%
         select(-scientific_name)
 
-    esv <- read_tsv(here("data/processed/rrnDB.esv.count_tibble"),
+    esv <- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
                                     col_types = cols(.default = col_character(),
-                                                                     count = col_integer()))
+                                                                     count = col_integer())) %>%
+        filter(threshold == "esv") %>%
+        select(-threshold)
 
     metadata_esv <- inner_join(metadata, esv, by=c("genome_id" = "genome"))
 
@@ -28,7 +30,7 @@ maybe there are many ESVs but only a handful of them are dominant?
     n_genomes_rrn_copies_per_species <-
         metadata_esv %>%
         # need the counts by region and by genome for each species
-      select(region, genome_id, species, esv, count) %>%
+      select(region, genome_id, species, easv, count) %>%
         # group our ESVs by region and species
       group_by(region, species) %>%
       summarize(
@@ -55,8 +57,8 @@ maybe there are many ESVs but only a handful of them are dominant?
         # want to do our analysis for the species level for each region of 16S will
         # want to group our genomes by ESVs and species to count the number of genomes
         # that each ESV appears in
-      select(region, genome_id, species, esv, count) %>%
-      group_by(region, species, esv) %>%
+      select(region, genome_id, species, easv, count) %>%
+      group_by(region, species, easv) %>%
 
         # count the number of genomes that each ESV appears in for region and species
         summarize(n_genomes_found = n_distinct(genome_id), .groups="drop") %>%
@@ -106,8 +108,8 @@ maybe there are many ESVs but only a handful of them are dominant?
         # want to do our analysis for the species level for each region of 16S will
         # want to group our genomes by ESVs and species to count the number of genomes
         # that each ESV appears in
-      select(region, genome_id, species, esv, count) %>%
-      group_by(region, species, esv) %>%
+      select(region, genome_id, species, easv, count) %>%
+      group_by(region, species, easv) %>%
 
         # instead of counting the number of genoems an ESV is found in, I want to
         # count the total number of times each ESV appears across the genomes within

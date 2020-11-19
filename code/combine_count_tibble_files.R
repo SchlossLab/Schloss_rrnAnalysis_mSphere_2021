@@ -9,11 +9,35 @@
 
 library(tidyverse)
 
+# rename_function <- function(x){
+# 	"easv"
+# }
+
+read_count_tibble <- function(count_tibble_file){
+
+	region <- str_replace(string=count_tibble_file,
+											 pattern="data/(.*)/rrnDB\\..*\\.count_tibble",
+											 replacement="\\1")
+
+	type <- if_else(str_detect(count_tibble_file, "esv"), "esv", "asv")
+
+	threshold <- if_else(type == "esv", "esv",
+											 str_replace(string=count_tibble_file,
+													pattern="data/.*/rrnDB\\.(.*)\\.count_tibble",
+													replacement="0.\\1"))
+
+	# rename asv or esv to be easv for column name
+	read_tsv(count_tibble_file, col_types="ccd") %>%
+		mutate(region = region,
+					 threshold = threshold) %>%
+		rename_with(function(x){"easv"}, ends_with("sv"))
+
+
+}
+
+
 tibble_files <- commandArgs(trailingOnly=TRUE)
 
-names(tibble_files) <- str_replace(string=tibble_files,
-																	 pattern="data/(.*)/rrnDB.esv.count_tibble",
-																	 replacement="\\1")
 
-map_dfr(.x=tibble_files, .f=read_tsv, .id="region", col_types="ccd") %>%
-	write_tsv("data/processed/rrnDB.esv.count_tibble")
+map_dfr(.x=tibble_files, .f=read_count_tibble) %>%
+	write_tsv("data/processed/rrnDB.easv.count_tibble")
