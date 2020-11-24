@@ -100,4 +100,5 @@ exploratory : \
 		exploratory/2020-10-05-rrn-copy-number.md\
 		exploratory/2020-10-15-esv-species-coverage.md\
 		exploratory/2020-10-21-esv-taxa-overlap.md\
-		exploratory/2020-11-02-dominance-commonness-of-esvs.md
+		exploratory/2020-11-02-dominance-commonness-of-esvs.md\
+		exploratory/2020-11-24-threshold-to-drop-n-asvs.md
