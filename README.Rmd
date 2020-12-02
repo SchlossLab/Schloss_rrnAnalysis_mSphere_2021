@@ -20,6 +20,7 @@ Developed over a series of *Code Club* episodes led by Pat Schloss to answer an 
 library(tidyverse)
 library(data.table)
 library(rmarkdown)
+library(Rcpp)
 ```
 
 ### Dependencies:
@@ -27,6 +28,7 @@ library(rmarkdown)
 * `wget`
 * `r R.version.string`
   * `tidyverse` (v. `r packageVersion("tidyverse")`)
+  * `Rcpp` (v. `r packageVersion("Rcpp")`)
   * `data.table` (v. `r packageVersion("data.table")`)
   * `rmarkdown` (v. `r packageVersion("rmarkdown")`)
 

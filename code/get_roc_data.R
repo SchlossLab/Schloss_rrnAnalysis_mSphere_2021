@@ -40,6 +40,7 @@
 # * Might be ideal to look into how to parallelize steps to speed things up
 
 library(tidyverse)
+library(Rcpp)
 
 set.seed(19760620)
 
@@ -75,54 +76,41 @@ metadata <- read_tsv("data/references/genome_id_taxonomy.tsv",
 
 metadata_easv <- inner_join(metadata, easv, by=c("genome_id" = "genome")) %>%
 	uncount(count) %>%
-	mutate(index = row_number()) %>%
 	select(-species)
 
-n_operons <- nrow(metadata_easv)
 
 # 4. Create a data frame that compares each operon to every other operon
-# expand_grid
-# real	1m25.596s
-# user	1m11.007s
-# sys	0m14.223s
 
-# all_v_all_comparison <- expand_grid(x=1:n_operons, y=1:n_operons) %>%
-# 	filter(x < y) %>%
-# 	inner_join(., metadata_easv, by=c("x"="index")) %>%
-# 	inner_join(., metadata_easv, by=c("y"="index")) %>%
-# 	select(-x, -y)
-	
-library(pryr)
-object_size(all_v_all_comparison)
+cppFunction('DataFrame get_confusion_matrix(DataFrame genomes_easvs){
 
-# 	tp = (genome_id.x == genome_id.y) & (easv.x == easv.y),
-# 	tn = (genome_id.x != genome_id.y) & (easv.x != easv.y),
-# 	fn = (genome_id.x == genome_id.y) & (easv.x != easv.y),
-# 	fp = (genome_id.x != genome_id.y) & (easv.x == easv.y)) %>%
+						CharacterVector genomes = genomes_easvs[0];
+						CharacterVector easvs = genomes_easvs[1];
+						
+						int n_operons = genomes.length();
+						
+						int tp = 0;
+						int fp = 0;
+						int tn = 0;
+						int fn = 0;
+						bool same_genome, same_easv;
+						
+						for(int i=0;i<(n_operons-1);i++){
+							for(int j=1;j<n_operons;j++){
 
-# iteration 1: with confusion as vector
-# tp     tn     fp     fn 
-# 63 217705    348      0 
-# iteration 2: with confusion as a list
-#> confusion %>% unlist()
-# tp     tn     fp     fn 
-# 72 219658    348      0 
+								same_genome = genomes[i] == genomes[j];
+								same_easv = easvs[i] == easvs[j];
+							
+									if(same_genome & same_easv) 			{ tp++; }
+									else if(!same_genome & !same_easv){ tn++; }
+									else if(same_genome & !same_easv) { fn++;	}
+									else if(!same_genome & same_easv) { fp++; }
+							}
+						}
+						
+						DataFrame confusion = DataFrame::create(Named("tp") = tp, Named("fp") = fp, Named("tn") = tn, Named("fn") = fn);
+						return(confusion);
+				}')
 
-confusion <- as.list(c(tp = 0, tn = 0, fp = 0, fn = 0))
-
-for(i in 1:(n_operons-1)){
-	for(j in 2:n_operons){
-		same_genome <- metadata_easv[i, "genome_id"] == metadata_easv[j, "genome_id"]
-		same_easv <- metadata_easv[i, "easv"] == metadata_easv[j, "easv"] 
-		
-		if(same_genome & same_easv) { confusion[["tp"]] <- confusion[["tp"]] + 1}
-		else if(!same_genome & !same_easv) { confusion[["tn"]] <- confusion[["tn"]] + 1}
-		else if(same_genome & !same_easv) { confusion[["fn"]] <- confusion[["fn"]] + 1}
-		else if(!same_genome & same_easv) { confusion[["fp"]] <- confusion[["fp"]] + 1}
-	}
-}
-
-confusion
 
 # 5. Store the confusion matrix and associated statistics for each iteration,
 #    region, and easv
@@ -133,22 +121,18 @@ confusion
 # * different taxa, same easv = false positive (merging different taxa)
 # * same taxa, different easv = false negative (splitting single taxa)
 
-# confusion_matrix <- all_v_all_comparison %>% mutate(
-# 	tp = (genome_id.x == genome_id.y) & (easv.x == easv.y),
-# 	tn = (genome_id.x != genome_id.y) & (easv.x != easv.y),
-# 	fn = (genome_id.x == genome_id.y) & (easv.x != easv.y),
-# 	fp = (genome_id.x != genome_id.y) & (easv.x == easv.y)) %>%
-# 	summarize(
-# 		true_pos = sum(tp),
-# 		true_neg = sum(tn),
-# 		false_neg = sum(fn),
-# 		false_pos = sum(fp)
-# 	) %>%
-# 	mutate(region = desired_region,
-# 				 threshold = desired_threshold,
-# 				 sensitivity = true_pos / (true_pos + false_neg), 
-# 				 specificity = true_neg / (true_neg + false_pos)) %>%
-# 	select(region, threshold, everything())
+confusion_matrix <- get_confusion_matrix(metadata_easv) %>%
+	summarize(
+		true_pos = sum(tp),
+		true_neg = sum(tn),
+		false_neg = sum(fn),
+		false_pos = sum(fp)
+	) %>%
+	mutate(region = desired_region,
+				 threshold = desired_threshold,
+				 sensitivity = true_pos / (true_pos + false_neg),
+				 specificity = true_neg / (true_neg + false_pos)) %>%
+	select(region, threshold, everything())
 
 
 # 6. Plot...
