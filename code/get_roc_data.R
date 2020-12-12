@@ -41,34 +41,35 @@
 
 library(tidyverse)
 library(Rcpp)
+library(furrr)
 
 # 4. Create a data frame that compares each operon to every other operon
 cppFunction('DataFrame get_confusion_matrix(DataFrame genomes_easvs){
 
 						CharacterVector genomes = genomes_easvs[0];
 						CharacterVector easvs = genomes_easvs[1];
-						
+
 						int n_operons = genomes.length();
-						
+
 						int tp = 0;
 						int fp = 0;
 						int tn = 0;
 						int fn = 0;
 						bool same_genome, same_easv;
-						
+
 						for(int i=0;i<(n_operons-1);i++){
 							for(int j=1;j<n_operons;j++){
 
 								same_genome = genomes[i] == genomes[j];
 								same_easv = easvs[i] == easvs[j];
-							
+
 									if(same_genome & same_easv) 			{ tp++; }
 									else if(!same_genome & !same_easv){ tn++; }
 									else if(same_genome & !same_easv) { fn++;	}
 									else if(!same_genome & same_easv) { fp++; }
 							}
 						}
-						
+
 						DataFrame confusion = DataFrame::create(
 							Named("true_pos") = tp,
 							Named("false_pos") = fp,
@@ -77,8 +78,6 @@ cppFunction('DataFrame get_confusion_matrix(DataFrame genomes_easvs){
 						return(confusion);
 				}')
 
-
-set.seed(19760620)
 
 
 # Plan of attack...
@@ -96,41 +95,48 @@ easv <- read_tsv("data/processed/rrnDB.easv.count_tibble",
 # 2. Read in metadata and sub-sample to get 1 genome per species so that we have
 #    the genome_id, easv, and count columns for each taxon
 
-metadata <- read_tsv("data/references/genome_id_taxonomy.tsv",
-										 col_types = cols(.default = col_character())) %>%
-	select(genome_id, species) %>%
-	group_by(species) %>% # Get one genome per species
-	slice_sample(n=1) %>%
-	ungroup()
+get_iteration <- function() {
+	metadata <- read_tsv("data/references/genome_id_taxonomy.tsv",
+											 col_types = cols(.default = col_character())) %>%
+		select(genome_id, species) %>%
+		group_by(species) %>% # Get one genome per species
+		slice_sample(n=1) %>%
+		ungroup()
 
 
-# 3. Generate data frame that contains separate rows for each operon in the
-#		 dataset by replicating each genome_id/easv row count times
+	# 3. Generate data frame that contains separate rows for each operon in the
+	#		 dataset by replicating each genome_id/easv row count times
 
-metadata_easv <- inner_join(metadata, easv, by=c("genome_id" = "genome")) %>%
-	uncount(count) %>%
-	select(-species)
-
-
-# 5. Store the confusion matrix and associated statistics for each iteration,
-#    region, and easv
-#
-# Confusion matrix...
-# * same taxa, same easv = true positive
-# * different taxa, different easv = true negative
-# * different taxa, same easv = false positive (merging different taxa)
-# * same taxa, different easv = false negative (splitting single taxa)
-
-confusion_matrix <- metadata_easv %>%
-	group_by(region, threshold) %>%
-	nest() %>%
-	mutate(confusion = map(data, ~get_confusion_matrix(.x))) %>%
-	unnest(confusion) %>%
-	select(-data) %>%
-	ungroup()
+	metadata_easv <- inner_join(metadata, easv, by=c("genome_id" = "genome")) %>%
+		uncount(count) %>%
+		select(-species)
 
 
-# 6. Plot...
-#    * ROC (true positive rate vs false positive rate) for each region and find
-#      threshold that gives optimal TPR/FPR
-#    * Sensitivity/Specificity/Accuracy/MCC against thresholds for each region
+	# 5. Store the confusion matrix and associated statistics for each iteration,
+	#    region, and easv
+	#
+	# Confusion matrix...
+	# * same taxa, same easv = true positive
+	# * different taxa, different easv = true negative
+	# * different taxa, same easv = false positive (merging different taxa)
+	# * same taxa, different easv = false negative (splitting single taxa)
+
+	confusion_matrix <- metadata_easv %>%
+		group_by(region, threshold) %>%
+		nest() %>%
+		mutate(confusion = map(data, ~get_confusion_matrix(.x))) %>%
+		unnest(confusion) %>%
+		select(-data) %>%
+		ungroup()
+
+}
+
+plan(multicore)
+
+confusion <- future_map_dfr(
+		1:100,
+		~get_iteration(),
+		.id="iteration",
+		.options = furrr_options(seed = 19760620)
+) %>%
+write_tsv("data/processed/rrnDB.roc.tsv")

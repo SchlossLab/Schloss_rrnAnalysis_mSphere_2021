@@ -21,6 +21,7 @@ library(tidyverse)
 library(data.table)
 library(rmarkdown)
 library(Rcpp)
+library(furrr)
 ```
 
 ### Dependencies:
@@ -29,6 +30,7 @@ library(Rcpp)
 * `r R.version.string`
   * `tidyverse` (v. `r packageVersion("tidyverse")`)
   * `Rcpp` (v. `r packageVersion("Rcpp")`)
+  * `furrr` (v. `r packageVersion("furrr")`)
   * `data.table` (v. `r packageVersion("data.table")`)
   * `rmarkdown` (v. `r packageVersion("rmarkdown")`)
 

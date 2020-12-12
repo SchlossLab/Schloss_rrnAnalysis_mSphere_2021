@@ -83,6 +83,10 @@ data/processed/rrnDB.easv.count_tibble : code/combine_count_tibble_files.R\
 		$(EASV_TIBBLES)
 	$^
 
+data/processed/rrnDB.roc.tsv : code/get_roc_data.R\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.easv.count_tibble
+	$^
 
 README.md : README.Rmd
 	R -e "library(rmarkdown); render('README.Rmd')"
