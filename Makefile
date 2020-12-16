@@ -1,8 +1,7 @@
-.SECONDARY:
 .SECONDEXPANSION:
 
 REGIONS=v4 v34 v45 v19
-THRESHOLDS=001 002 003 004 005 008 01 015 02 025 03 04 05
+THRESHOLDS=001 002 003 004 005 008 01 015 02 025 03 035 04 045 05 055 06 065 07 075 08 085 09 095 1
 
 print-% :
 	@echo '$*=$($*)'
@@ -91,6 +90,12 @@ data/processed/rrnDB.roc.tsv : code/get_roc_data.R\
 README.md : README.Rmd
 	R -e "library(rmarkdown); render('README.Rmd')"
 
+
+exploratory/2020-12-21-roc-curve.md : exploratory/2020-12-21-roc-curve.Rmd\
+		data/processed/rrnDB.roc.tsv
+	R -e "library(rmarkdown); render('$<')"
+
+
 %.md : %.Rmd\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble
@@ -106,4 +111,5 @@ exploratory : \
 		exploratory/2020-10-21-esv-taxa-overlap.md\
 		exploratory/2020-11-02-dominance-commonness-of-esvs.md\
 		exploratory/2020-11-24-threshold-to-drop-n-asvs.md\
-		exploratory/2020-11-30-lumping-and-splitting.md
+		exploratory/2020-11-30-lumping-and-splitting.md\
+		exploratory/2020-12-21-roc-curve.md
