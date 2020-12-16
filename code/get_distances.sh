@@ -8,4 +8,4 @@ TARGET=$1 # data/v4/rrnDB.unique.dist
 
 ALIGN=`echo $TARGET | sed -E "s/dist/align/"`
 
-code/mothur/mothur "#dist.seqs(fasta=$ALIGN, cutoff=0.05)"
+code/mothur/mothur "#dist.seqs(fasta=$ALIGN, cutoff=0.10)"
