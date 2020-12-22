@@ -113,3 +113,8 @@ exploratory : \
 		exploratory/2020-11-24-threshold-to-drop-n-asvs.md\
 		exploratory/2020-11-30-lumping-and-splitting.md\
 		exploratory/2020-12-21-roc-curve.md
+
+
+
+submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd
+	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'

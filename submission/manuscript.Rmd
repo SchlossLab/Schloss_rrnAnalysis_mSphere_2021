@@ -1,6 +1,55 @@
+---
+output:
+  word_document: default
+  pdf_document:
+    keep_tex: true
+geometry: margin=1.0in
+font-size: 11pt
+header-includes:
+  - \usepackage{helvet}
+  - \renewcommand*\familydefault{\sfdefault}
+  - \usepackage{setspace}
+  - \doublespacing
+  - \usepackage[left]{lineno}
+  - \linenumbers
+---
+
+# Amplicon sequence variants should not replace operational taxonomic units in marker-gene data analysis
+
+
+\vspace{20mm}
+
+**Running title:** ASVs vs. OTUs
+
+\vspace{20mm}
+
+Patrick D. Schloss${^\dagger}$
+
+\vspace{40mm}
+
+${\dagger}$ To whom corresponsdence should be addressed:
+
+
+\href{mailto:pschloss@umich.edu}{pschloss@umich.edu}
+
+Department of Microbiology & Immunology
+
+University of Michigan
+
+Ann Arbor, MI 48109
+
+\vspace{20mm}
+
+**Observation Format**
+
+\newpage
+
+
 ## Abstract (250 words)
 
 ## Importance (150 words)
+
+\newpage
 
 ## Introduction
 * 16S rRNA gene sequencing is a very powerful technique for describing and comparing microbial communities
@@ -18,6 +67,7 @@
 
 * Goal of this study
 
+\newpage
 
 ## Results
 * ESVs/ASVs
@@ -30,6 +80,7 @@
   - this limits the splitting of a single genome into multiple bins
   - this increases the lumping of species into single bin
 
+\newpage
 
 ## Conclusions
 * Briefly synthesize results
@@ -45,6 +96,8 @@
 
 * Surprisingly, 3% performs pretty well for an operational definition that limits splitting of bacterial genomes and avoiding the lumping of bacterial species
 
+\newpage
+
 
 ## Materials and Methods
 * rrnDB
@@ -52,8 +105,11 @@
 * R and R packages
 * GitHub / YouTube
 
+\newpage
+
 
 ## Acknowledgements
 
+\newpage
 
 ## Figures
