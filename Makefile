@@ -116,5 +116,7 @@ exploratory : \
 
 
 
-submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd
+submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.easv.count_tibble
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
