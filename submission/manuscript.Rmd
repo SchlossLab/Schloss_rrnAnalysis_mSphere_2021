@@ -20,6 +20,37 @@ editor_options:
 library(tidyverse)
 library(knitr)
 library(here)
+
+opts_chunk$set(echo = FALSE)
+
+inline_hook <- function(x){
+	
+	if(is.numeric(x)){
+		if(abs(x - round(x) < .Machine$double.eps)){
+			# treat as integer
+			formatted <- format(x, digits=0, big.mark = ",")
+
+		} else {
+			# treat as floating point number
+			formatted <- format(x, digits=2, nsmall=2, big.mark = ",")
+		}
+	} else {
+		formatted <-x
+	}
+	
+	paste0("**", formatted, "**")
+	
+	
+}
+
+
+knit_hooks$set(inline=inline_hook)
+
+format_pct <- function(x, my_digits=1){
+	
+	format(x, digits=my_digits, nsmall=my_digits)
+	
+}
 ```
 
 # Amplicon sequence variants should not replace operational taxonomic units in marker-gene data analysis
@@ -61,7 +92,7 @@ Ann Arbor, MI 48109
 
 16S rRNA gene sequencing is a very powerful technique for describing and comparing microbial communities. Efforts to link 16S rRNA gene sequences to taxonomic levels based on distance thresholds go back to at least the 1990s. The distance-based thresholds that were developed and are now widely used (3%) were based on DNA-DNA hybridization approaches that are not as precise as genome sequencing. Instead, genome sequencing technologies have suggested that the widely used 3% distance threshold to operationally define bacterial taxa is too coarse. As an alternative to OTUs, amplicon sequencing variants (ASVs) have been proposed as a way to adopt the thresholds suggested by genome sequencing to microbial community analysis using 16S rRNA gene sequences. ASVs are a unit of microbial community inference that do not cluster sequences based on a distance-based threshold. However, most bacterial genomes have more than 1 copy of the rrn operon and those copies are not identical. Therefore, using too fine a threshold to identify OTUs creates the risk of splitting a single genome into multiple bins and using too broad of a threshold to define OTUs creates the risk of lumping together bacterial species into the same OTU. An example of both is seen in the comparison of Staphylococcus aureus (NCTC 8325) and S. epidermidis (ATCC 12228) where each genome has 5 copies of the 16S rRNA gene. The 10 copies of the 16S rRNA gene each have a different sequence and so if OTUs are defined based on ASVs, each genome would be split into 5 OTUs. Conversely, if the copies were clustered using a 3% distance threshold all 10 copies would cluster into the same OTU. The goal of this study was to quantify the risk of splitting a single genome into multiple bins and the risk of lumping together different bacterial species into the same bin.
 
-```{r, echo=FALSE}
+```{r}
 metadata <- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
 										 col_types = cols(.default = col_character()))
 
@@ -116,7 +147,53 @@ To investigate the variation in the number of copies of the 16S rRNA gene per ge
 
 A method to avoid splitting a single genome into multiple units of inference is to cluster 16S rRNA gene sequences together that are similar. However, this also increases the risk of lumping together genes from different species that are similar to each other. Therefore, I assessed the impact of the threshold used to define clusters of 16S rRNA genes on the propopensity to lump species together and split genome apart. I identified the threshold where 90% of bacterial species would be represented by a single OTU. For full length 16S rRNA gene sequences, I found that at a threshold of XX%, 90% of the species would be represented by a single OTU. Similarly, thresholds of XX, XX, and XX% were observed for the V4, V3-V4, and V4-V5 regions. However, at these thresholds, multiple species could be represented by the same OTU. At the highest level of resolution, XX% of the species shared a 16S rRNA gene sequence variant with another species. Given the risk of splitting a genome into multiple OTUs is more biologically problematic than lumping species together, larger thresholds are advisable.
 
-To provide a more nuanced approach to selecting a threshold, it would be useful to to quantify the sensitivity and specificity of characterizing bacterial species using OTUs defined at different thresholds. I created confusion matrices for multiple regions of the 16S rRNA gene: true positives were those cases where two ASVs were joined in the same OTU and the same species; true negatives were those cases where two ASVs from different OTUs came from different species; false positives were those ASVs that joined the same OTU, but were from different species; and false negatives were those ASVs that joined different OTUs, but were from the same species. By calculating the sensitivity and specificity for each threshold and each region of the 16S rRNA gene, I was able to constuct a receiver operator characteristic curve (ROC). Because the ROC curve represents a range of possible thresholds and sensitivities and specificities, I used two metrics to select the best threshold for defining an OTU. First, I identified the thresholds where the sensitivity and specificity were most similar to each other. For this criterion, the best thresholds were XX (V1-V9), XX (V4), XX (V3V4), and XX (V4V5). Second, I identified the threshold that resulted in the point on the ROC curve that was closest to perfect classification. For this criterion, the best thresholds were XX (V1-V9), XX (V4), XX (V3V4), and XX (V4V5). Surprisingly, these analyses revealed that thresholds near 3% balance the risks of splitting genomes into separate OTUs and lumping species into the same OTU.
+```{r}
+sensitivity_specificity <- read_tsv(here("data/processed/rrnDB.roc.tsv"),
+													 col_types = cols(.default = col_double(),
+													 								 region = col_character()
+													 								 )
+													 ) %>%
+	mutate(sensitivity = true_pos / (true_pos + false_neg),
+				 specificity = true_neg / (true_neg + false_pos)) %>%
+	group_by(region, threshold) %>%
+	summarize(sensitivity = median(sensitivity),
+						specificity = median(specificity),
+						.groups="drop") %>%
+	select(region, threshold, sensitivity, specificity)
+
+balance <- sensitivity_specificity %>%
+	mutate(diff=abs(sensitivity - specificity)) %>%
+	group_by(region) %>%
+	summarize(min_diff = min(diff),
+						threshold = threshold[which.min(diff)],
+						sensitivity = sensitivity[which.min(diff)],
+						specificity = specificity[which.min(diff)],
+						.groups="drop"
+						)
+
+balance_v19 <- balance %>% filter(region == "v19") %>% pull(threshold) * 100
+balance_v4 <- balance %>% filter(region == "v4") %>% pull(threshold) * 100
+balance_v34 <- balance %>% filter(region == "v34") %>% pull(threshold) * 100
+balance_v45 <- balance %>% filter(region == "v45") %>% pull(threshold) * 100
+
+distance <- sensitivity_specificity %>%
+	mutate(distance = sqrt((specificity - 1)^2 + (sensitivity - 1)^2)) %>%
+	group_by(region) %>%
+	summarize(min_distance = min(distance),
+						threshold = threshold[which.min(distance)],
+						sensitivity = sensitivity[which.min(distance)],
+						specificity = specificity[which.min(distance)],
+						.groups="drop"
+						)
+
+distance_v19 <- distance %>% filter(region == "v19") %>% pull(threshold) * 100
+distance_v4 <- distance %>% filter(region == "v4") %>% pull(threshold) * 100
+distance_v34 <- distance %>% filter(region == "v34") %>% pull(threshold) * 100
+distance_v45 <- distance %>% filter(region == "v45") %>% pull(threshold) * 100
+
+```
+
+To provide a more nuanced approach to selecting a threshold, it would be useful to to quantify the sensitivity and specificity of characterizing bacterial species using OTUs defined at different thresholds. I created confusion matrices for multiple regions of the 16S rRNA gene: true positives were those cases where two ASVs were joined in the same OTU and the same species; true negatives were those cases where two ASVs from different OTUs came from different species; false positives were those ASVs that joined the same OTU, but were from different species; and false negatives were those ASVs that joined different OTUs, but were from the same species. By calculating the sensitivity and specificity for each threshold and each region of the 16S rRNA gene, I was able to constuct a receiver operator characteristic curve (ROC). Because the ROC curve represents a range of possible thresholds and sensitivities and specificities, I used two metrics to select the best threshold for defining an OTU. First, I identified the thresholds where the sensitivity and specificity were most similar to each other. For this criterion, the best distance thresholds were `r format_pct(balance_v19)`% (V1-V9), `r format_pct(balance_v4)`% (V4), `r format_pct(balance_v34)`% (V3-V4), and `r format_pct(balance_v45)`% (V4-V5). Second, I identified the distance threshold that resulted in the point on the ROC curve that was closest to perfect classification. For this criterion, the best distance thresholds were `r format_pct(distance_v19)`% (V1-V9), `r format_pct(distance_v4)`% (V4), `r format_pct(distance_v34)`% (V3-V4), and `r format_pct(distance_v45)`% (V4-V5). Surprisingly, these analyses revealed that thresholds near 3% distance balance the risks of splitting genomes into separate OTUs and lumping species into the same OTU.
 
 The results of this analysis demonstrate that there is a significant risk of splitting single genomes into multiple bins if too fine of a threshold is applied to defining an OTU. An ongoing problem for amplicon-based studies is defining a meaningful taxonomic unit of inference. Since there is no consensus definition for a biological species concept, microbiologists must accept that how we have named bacterial species is biased and that taxonomic rules are not applied in a consistent manner. This makes it more challenging to attempt to fit a distance threshold to define an OTU definition that matches a set of species names. Furthermore, it is unlikely that the 16S rRNA gene evolves at the same rate across all bacterial lineages, which limits the biological interpretation of a common OTU definition. At best, a distance-based definition of a taxonomic unit is operational. There is general agreement in bacterial systematics that to classify something to a bacterial species, you need phenotypic and genome sequence data (CITATION). We are asking too much of a short section of a bacterial genome to be able to differentiate between species. It is difficult to defend a unit of inference that would split a single genome into multiple taxonomic units. It is not biologically plausible to entertain the possability that parts of a genome would have different ecologies. Although there are multiple reasons that proponents of ASVs encourage their use, the significant risk of splitting genomes is too high to warrant their use.
 
