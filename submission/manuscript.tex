@@ -129,10 +129,10 @@ using too fine a threshold to identify OTUs creates the risk of
 splitting a single genome into multiple bins and using too broad of a
 threshold to define OTUs creates the risk of lumping together bacterial
 species into the same OTU. An example of both is seen in the comparison
-of Staphylococcus aureus (NCTC 8325) and S. epidermidis (ATCC 12228)
-where each genome has 5 copies of the 16S rRNA gene. The 10 copies of
-the 16S rRNA gene each have a different sequence and so if OTUs are
-defined based on ASVs, each genome would be split into 5 OTUs.
+of \emph{Staphylococcus aureus} (NCTC 8325) and \emph{S. epidermidis}
+(ATCC 12228) where each genome has 5 copies of the 16S rRNA gene. The 10
+copies of the 16S rRNA gene each have a different sequence and so if
+OTUs are defined based on ASVs, each genome would be split into 5 OTUs.
 Conversely, if the copies were clustered using a 3\% distance threshold
 all 10 copies would cluster into the same OTU. The goal of this study
 was to quantify the risk of splitting a single genome into multiple bins
@@ -142,27 +142,30 @@ same bin.
 To investigate the variation in the number of copies of the 16S rRNA
 gene per genome as well as the intragenomic variation among copies of
 the 16S rRNA gene, I obtained reference 16S rRNA sequences from the rrn
-copy number database (rrnDB; CITATION). Among the 4774 species
-represented in the rrnDB there were 15614 genomes. The median number of
-rrn operson per species ranged between 1 (e.g.~Mycobacterium
-tuberculosis) and 19 (e.g.~Metabacillus litoralis) copies of the rrn
-operon. As the number of copies of the operon in a genome increased, the
-number of variants of the 16S rRNA gene in each genome also increased
-(\textbf{FIGURE}). On average, there were 0.5970303 variants per copy of
-the full length 16S rRNA gene and an average of 0.2551013, 0.3265188,
-and 0.2744228 variants when considering the V4, V3-V4, and V4-V5 regions
-of the gene, respectively. Although a species tended to have a
-consistent number of 16S rRNA gene copies per genome, the number of
-total variants increased with the number of genomes that were sampled
-(\textbf{FIGURE}). For example, Mycobacterium tuberculosis generally
-only had 1 copy of the gene per genome, but across the 180 genomes that
-have been sequenced there were 11 versions of the gene. Similarly, a E.
-coli genome typically had 7 copies of the 16S rRNA gene with between 6
-and 10 distinct full length sequences per genome. Across the 958 E. coli
-genomes that have been sequenced, there were 1013 different variants of
-the gene. These observations highlight the risk of selecting a threshold
-for defining units of inference that is too narrow because it is
-possible to split a single genome into multiple units.
+copy number database (rrnDB; CITATION). Among the \textbf{4,774} species
+represented in the rrnDB there were \textbf{15,614} genomes. The median
+number of rrn operson per species ranged between \textbf{1}
+(e.g.~\textbf{\emph{Mycobacterium tuberculosis}}) and \textbf{19}
+(\textbf{\emph{Metabacillus litoralis}}) copies of the rrn operon. As
+the number of copies of the operon in a genome increased, the number of
+variants of the 16S rRNA gene in each genome also increased
+(\textbf{FIGURE}). On average, there were \textbf{1} variants per copy
+of the full length 16S rRNA gene and an average of \textbf{0.26},
+\textbf{0.33}, and \textbf{0.27} variants when considering the V4,
+V3-V4, and V4-V5 regions of the gene, respectively. Although a species
+tended to have a consistent number of 16S rRNA gene copies per genome,
+the number of total variants increased with the number of genomes that
+were sampled (\textbf{FIGURE}). For example, \textbf{\emph{Mycobacterium
+tuberculosis}} generally only had \textbf{1} copy of the gene per
+genome, but across the \textbf{180} genomes that have been sequenced
+there were \textbf{11} versions of the gene. Similarly, a \emph{E. coli}
+genome typically had \textbf{7} copies of the 16S rRNA gene with between
+\textbf{6} and \textbf{10} distinct full length sequences per genome.
+Across the \textbf{958} \emph{E. coli} genomes that have been sequenced,
+there were \textbf{1,013} different variants of the gene. These
+observations highlight the risk of selecting a threshold for defining
+units of inference that is too narrow because it is possible to split a
+single genome into multiple units.
 
 A method to avoid splitting a single genome into multiple units of
 inference is to cluster 16S rRNA gene sequences together that are
@@ -197,13 +200,15 @@ curve represents a range of possible thresholds and sensitivities and
 specificities, I used two metrics to select the best threshold for
 defining an OTU. First, I identified the thresholds where the
 sensitivity and specificity were most similar to each other. For this
-criterion, the best thresholds were XX (V1-V9), XX (V4), XX (V3V4), and
-XX (V4V5). Second, I identified the threshold that resulted in the point
+criterion, the best distance thresholds were \textbf{6.0}\% (V1-V9),
+\textbf{4.5}\% (V4), \textbf{5.5}\% (V3-V4), and \textbf{4.0}\% (V4-V5).
+Second, I identified the distance threshold that resulted in the point
 on the ROC curve that was closest to perfect classification. For this
-criterion, the best thresholds were XX (V1-V9), XX (V4), XX (V3V4), and
-XX (V4V5). Surprisingly, these analyses revealed that thresholds near
-3\% balance the risks of splitting genomes into separate OTUs and
-lumping species into the same OTU.
+criterion, the best distance thresholds were \textbf{5.5}\% (V1-V9),
+\textbf{3.5}\% (V4), \textbf{4.5}\% (V3-V4), and \textbf{3.5}\% (V4-V5).
+Surprisingly, these analyses revealed that thresholds near 3\% distance
+balance the risks of splitting genomes into separate OTUs and lumping
+species into the same OTU.
 
 The results of this analysis demonstrate that there is a significant
 risk of splitting single genomes into multiple bins if too fine of a
