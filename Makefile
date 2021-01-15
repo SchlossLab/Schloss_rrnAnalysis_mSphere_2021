@@ -87,6 +87,12 @@ data/processed/rrnDB.roc.tsv : code/get_roc_data.R\
 		data/processed/rrnDB.easv.count_tibble
 	$^
 
+data/processed/thresholds_for_single_otu.tsv : code/get_threshold_for_single_otu.R\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.easv.count_tibble
+	$^
+
+
 README.md : README.Rmd
 	R -e "library(rmarkdown); render('README.Rmd')"
 
@@ -119,5 +125,6 @@ exploratory : \
 submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble\
+		data/processed/thresholds_for_single_otu.tsv\
 		data/processed/rrnDB.roc.tsv
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
