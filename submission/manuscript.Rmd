@@ -156,9 +156,25 @@ threshold_v19 <- thresholds %>% filter(region == "v19") %>% pull(threshold) * 10
 threshold_v4 <- thresholds %>% filter(region == "v4") %>% pull(threshold) * 100
 threshold_v34 <- thresholds %>% filter(region == "v34") %>% pull(threshold) * 100
 threshold_v45 <- thresholds %>% filter(region == "v45") %>% pull(threshold) * 100
+
+lump_split <- read_tsv(here("data/processed/lumped_split_rate.tsv"),
+											 col_types = cols(region = col_character(),
+											 								 .default = col_double()))
+
+lump_v19 <- lump_split %>% filter(threshold ==0 &region == "v19") %>% pull(lump_rate) * 100
+lump_v4 <- lump_split %>% filter(threshold ==0 &region == "v4") %>% pull(lump_rate) * 100
+lump_v34 <- lump_split %>% filter(threshold ==0 &region == "v34") %>% pull(lump_rate) * 100
+lump_v45 <- lump_split %>% filter(threshold ==0 &region == "v45") %>% pull(lump_rate) * 100
+
+lump3_v19 <- lump_split %>% filter(threshold ==0.03 & region == "v19") %>% pull(lump_rate) * 100
+lump3_v4 <- lump_split %>% filter(threshold ==0.03 & region == "v4") %>% pull(lump_rate) * 100
+lump3_v34 <- lump_split %>% filter(threshold ==0.03 & region == "v34") %>% pull(lump_rate) * 100
+lump3_v45 <- lump_split %>% filter(threshold ==0.03 & region == "v45") %>% pull(lump_rate) * 100
+
+
 ```
 
-A method to avoid splitting a single genome into multiple units of inference is to cluster 16S rRNA gene sequences together that are similar. However, this also increases the risk of lumping together genes from different species that are similar to each other. Therefore, I assessed the impact of the threshold used to define clusters of 16S rRNA genes on the propensity to split a genome apart or to lump species together. For full length 16S rRNA gene sequences, I found that at a threshold of `r format_pct(threshold_v19)`%, 95% of the species with 7 copies of the rrn operon would be represented by a single OTU. Similarly, thresholds of `r format_pct(threshold_v4)`, `r format_pct(threshold_v34)`, and `r format_pct(threshold_v45)`% were observed for the V4, V3-V4, and V4-V5 regions, respectively. However, at these thresholds, multiple species could be represented by the same OTU. At the highest level of resolution, XX% of the species shared a 16S rRNA gene sequence variant with another species. Given the risk of splitting a genome into multiple OTUs is more biologically problematic than lumping species together, larger thresholds are advisable.
+A method to avoid splitting a single genome into multiple units of inference is to cluster 16S rRNA gene sequences together that are similar. However, this also increases the risk of lumping together genes from different species that are similar to each other. Therefore, I assessed the impact of the threshold used to define clusters of 16S rRNA genes on the propensity to split a genome apart or to lump species together. For full length 16S rRNA gene sequences, I found that at a threshold of `r format_pct(threshold_v19)`%, 95% of the species with 7 copies of the rrn operon would be represented by a single OTU. Similarly, thresholds of `r format_pct(threshold_v4)`, `r format_pct(threshold_v34)`, and `r format_pct(threshold_v45)`% were observed for the V4, V3-V4, and V4-V5 regions, respectively. However, at these thresholds, multiple species could be represented by the same OTU. At the highest level of resolution, `r format_pct(lump_v19)`% of the species shared a 16S rRNA gene sequence variant with another species when considering full length sequences and `r format_pct(lump_v4)`, `r format_pct(lump_v34)`, and `r format_pct(lump_v45)`% when considering the V4, V3-V4, and V4-V5 regions, respectively. At the commonly used 3% threshold, `r format_pct(lump3_v19)`% of the species shared an OTU when considering full length sequences and `r format_pct(lump3_v4)`, `r format_pct(lump3_v34)`, and `r format_pct(lump3_v45)`% when considering the V4, V3-V4, and V4-V5 regions, respectively. Given the risk of splitting a genome into multiple OTUs is more biologically problematic than lumping species together, larger thresholds are advisable.
 
 ```{r}
 sensitivity_specificity <- read_tsv(here("data/processed/rrnDB.roc.tsv"),
