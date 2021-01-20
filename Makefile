@@ -126,11 +126,16 @@ exploratory : \
 		exploratory/2020-12-21-roc-curve.md
 
 
+figures/esv_rate.% : code/plot_esv_rate.R\
+		data/references/genome_id_taxonomy.tsv\
+		data/processed/rrnDB.easv.count_tibble
+	./code/plot_esv_rate.R
 
 submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble\
 		data/processed/thresholds_for_single_otu.tsv\
 		data/processed/lumped_split_rate.tsv\
-		data/processed/rrnDB.roc.tsv
+		data/processed/rrnDB.roc.tsv\
+		figures/esv_rate.pdf
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
