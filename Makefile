@@ -126,14 +126,18 @@ exploratory : \
 		exploratory/2020-12-21-roc-curve.md
 
 
-figures/esv_rate.% : code/plot_esv_rate.R\
+figures/esv_rate.pdf figures/esv_rate.tiff : code/plot_esv_rate.R\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble
 	./code/plot_esv_rate.R
 
-figures/lump_split.% : code/plot_lump_split.R\
+figures/lump_split.pdf figures/roc_curve.tiff: code/plot_lump_split.R\
 		data/processed/lumped_split_rate.tsv
 	./code/plot_lump_split.R
+
+figures/roc_curve.pdf figures/roc_curve.tiff : code/plot_roc_curve.R\
+		data/processed/rrndB.roc.tsv
+	./code/plot_roc_curve.R
 
 submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
 		data/references/genome_id_taxonomy.tsv\
@@ -142,5 +146,6 @@ submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd
 		data/processed/lumped_split_rate.tsv\
 		data/processed/rrnDB.roc.tsv\
 		figures/esv_rate.pdf\
-		figures/lump_split.pdf
+		figures/lump_split.pdf\
+		figures/roc_curve.pdf
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
