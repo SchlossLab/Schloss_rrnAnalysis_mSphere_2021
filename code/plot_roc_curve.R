@@ -2,7 +2,7 @@
 
 library(tidyverse)
 library(here)
-library(knitr)
+source(here("code/colors.R"))
 
 sensitivity_specificity <- read_tsv(here("data/processed/rrnDB.roc.tsv"),
 																		col_types = cols(.default = col_double(),
@@ -66,11 +66,8 @@ sensitivity_specificity %>%
 	geom_segment(data=annotation, aes(x=1-specificity, y=sensitivity, xend=xend, yend=yend)) +
 	geom_label(data=annotation, aes(label=pretty, x=xend, y=yend), color="black") +
 	coord_cartesian(ylim=c(0.9, 1)) +
-	scale_color_manual(name = NULL,
-										 breaks = c("v19", "v34", "v4", "v45"),
-										 values = c("black", "blue", "green", "red"),
-										 labels = c("V1-V9", "V3-V4", "V4", "V4-V5")) +
-		labs(x="1-Specificity", y="Sensitivity") +
+	custom_color_scale() + 
+	labs(x="1-Specificity", y="Sensitivity") +
 	theme_classic() +
 	theme(
 		legend.position = c(0.9, 0.2),

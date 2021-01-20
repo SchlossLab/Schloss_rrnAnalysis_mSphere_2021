@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript --vanilla
 
 library(tidyverse)
+source('code/colors.R')
 
 read_tsv("data/processed/lumped_split_rate.tsv",
 				 col_types = cols(region = col_character(),
@@ -17,10 +18,7 @@ read_tsv("data/processed/lumped_split_rate.tsv",
 		breaks = c(0, 0.025, 0.05, 0.075, 0.1),
 		labels=c("0", "2.5", "5", "7.5", "10")
 		) + 
-	scale_color_manual(name = NULL,
-										 breaks = c("v19", "v34", "v4", "v45"),
-										 values = c("black", "blue", "green", "red"),
-										 labels = c("V1-V9", "V3-V4", "V4", "V4-V5")) +
+	custom_color_scale() + 
 	labs(x="Distance theshold\nto define ASV/OTU (%)", y=NULL) +
 	theme_classic() +
 	theme(

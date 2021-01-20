@@ -3,6 +3,7 @@
 library(tidyverse)
 library(knitr)
 library(here)
+library(ggtext)
 
 metadata <- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
 										 col_types = cols(.default = col_character())) %>%
@@ -50,10 +51,11 @@ species_esvs %>%
 	scale_x_log10()+
 	scale_y_log10(breaks=c(0.1, 1, 10, 100), labels = c("0.1", "1", "10", "100")) +
 	labs(x="Number of genomes",
-			 y="Number of ASVs per rrn copy") +
+			 y="Number of ASVs per *rrn* copy") +
 	theme_classic() +
 	theme(
-		strip.text = element_blank()
+		strip.text = element_blank(),
+		axis.title.y = element_markdown()
 	)
 
 ggsave("figures/esv_rate.tiff", width=3.5, height=8, compression="lzw")
