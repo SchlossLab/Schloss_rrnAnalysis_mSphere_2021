@@ -141,12 +141,24 @@ figures/roc_curve.pdf figures/roc_curve.tiff : code/plot_roc_curve.R\
 		data/processed/rrndB.roc.tsv
 	./code/plot_roc_curve.R
 
+submission/figure_1.tiff : figures/esv_rate.tiff
+	convert -compress lzw $< $@
+
+submission/figure_2.tiff : figures/lump_split.tiff
+	convert -compress lzw $< $@
+
+submission/figure_s1.tiff : figures/roc_curve.tiff
+	convert -compress lzw $< $@
+
 submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble\
 		data/processed/thresholds_for_single_otu.tsv\
 		data/processed/lumped_split_rate.tsv\
 		data/processed/rrnDB.roc.tsv\
+		submission/figure_1.tiff\
+		submission/figure_2.tiff\
+		submission/figure_s1.tiff\
 		figures/esv_rate.pdf\
 		figures/lump_split.pdf\
 		figures/roc_curve.pdf

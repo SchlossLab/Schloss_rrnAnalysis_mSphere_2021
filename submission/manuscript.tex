@@ -148,20 +148,19 @@ number of rrn operson per species ranged between \textbf{1}
 (e.g.~\textbf{\emph{Mycobacterium tuberculosis}}) and \textbf{19}
 (\textbf{\emph{Metabacillus litoralis}}) copies of the rrn operon. As
 the number of copies of the operon in a genome increased, the number of
-variants of the 16S rRNA gene in each genome also increased
-(\textbf{FIGURE}). On average, there were \textbf{1} variants per copy
-of the full length 16S rRNA gene and an average of \textbf{0.26},
-\textbf{0.33}, and \textbf{0.27} variants when considering the V4,
-V3-V4, and V4-V5 regions of the gene, respectively. Although a species
-tended to have a consistent number of 16S rRNA gene copies per genome,
-the number of total variants increased with the number of genomes that
-were sampled (\textbf{Figure 1}). For example,
-\textbf{\emph{Mycobacterium tuberculosis}} generally only had \textbf{1}
-copy of the gene per genome, but across the \textbf{180} genomes that
-have been sequenced there were \textbf{11} versions of the gene.
-Similarly, a \emph{E. coli} genome typically had \textbf{7} copies of
-the 16S rRNA gene with between \textbf{6} and \textbf{10} distinct full
-length sequences per genome. Across the \textbf{958} \emph{E. coli}
+variants of the 16S rRNA gene in each genome also increased. On average,
+there were \textbf{1} variants per copy of the full length 16S rRNA gene
+and an average of \textbf{0.26}, \textbf{0.33}, and \textbf{0.27}
+variants when considering the V4, V3-V4, and V4-V5 regions of the gene,
+respectively. Although a species tended to have a consistent number of
+16S rRNA gene copies per genome, the number of total variants increased
+with the number of genomes that were sampled (\textbf{Figure 1}). For
+example, \textbf{\emph{Mycobacterium tuberculosis}} generally only had
+\textbf{1} copy of the gene per genome, but across the \textbf{180}
+genomes that have been sequenced there were \textbf{11} versions of the
+gene. Similarly, a \emph{E. coli} genome typically had \textbf{7} copies
+of the 16S rRNA gene with between \textbf{6} and \textbf{10} distinct
+full length sequences per genome. Across the \textbf{958} \emph{E. coli}
 genomes that have been sequenced, there were \textbf{1,013} different
 variants of the gene. These observations highlight the risk of selecting
 a threshold for defining units of inference that is too narrow because
@@ -178,17 +177,18 @@ threshold of \textbf{5.5}\%, 95\% of the species with 7 copies of the
 rrn operon would be represented by a single OTU. Similarly, thresholds
 of \textbf{2.5}, \textbf{4.0}, and \textbf{3.5}\% were observed for the
 V4, V3-V4, and V4-V5 regions, respectively. However, at these
-thresholds, multiple species could be represented by the same OTU. At
-the highest level of resolution, \textbf{3.6}\% of the species shared a
-16S rRNA gene sequence variant with another species when considering
-full length sequences and \textbf{14.9}, \textbf{10.2}, and
-\textbf{12.0}\% when considering the V4, V3-V4, and V4-V5 regions,
-respectively. At the commonly used 3\% threshold, \textbf{25.2}\% of the
-species shared an OTU when considering full length sequences and
-\textbf{33.0}, \textbf{29.4}, and \textbf{32.2}\% when considering the
-V4, V3-V4, and V4-V5 regions, respectively. Given the risk of splitting
-a genome into multiple OTUs is more biologically problematic than
-lumping species together, larger thresholds are advisable.
+thresholds, multiple species could be represented by the same OTU
+(\textbf{Figure 2}). At the highest level of resolution, \textbf{3.6}\%
+of the species shared a 16S rRNA gene sequence variant with another
+species when considering full length sequences and \textbf{14.9},
+\textbf{10.2}, and \textbf{12.0}\% when considering the V4, V3-V4, and
+V4-V5 regions, respectively. At the commonly used 3\% threshold,
+\textbf{25.2}\% of the species shared an OTU when considering full
+length sequences and \textbf{33.0}, \textbf{29.4}, and \textbf{32.2}\%
+when considering the V4, V3-V4, and V4-V5 regions, respectively. Given
+the risk of splitting a genome into multiple OTUs is more biologically
+problematic than lumping species together, larger thresholds are
+advisable.
 
 To provide a more nuanced approach to selecting a threshold, it would be
 useful to to quantify the sensitivity and specificity of characterizing
@@ -201,20 +201,20 @@ those ASVs that joined the same OTU, but were from different species;
 and false negatives were those ASVs that joined different OTUs, but were
 from the same species. By calculating the sensitivity and specificity
 for each threshold and each region of the 16S rRNA gene, I was able to
-constuct a receiver operator characteristic curve (ROC). Because the ROC
-curve represents a range of possible thresholds and sensitivities and
-specificities, I used two metrics to select the best threshold for
-defining an OTU. First, I identified the thresholds where the
-sensitivity and specificity were most similar to each other. For this
-criterion, the best distance thresholds were \textbf{6.0}\% (V1-V9),
-\textbf{4.5}\% (V4), \textbf{5.5}\% (V3-V4), and \textbf{4.0}\% (V4-V5).
-Second, I identified the distance threshold that resulted in the point
-on the ROC curve that was closest to perfect classification. For this
-criterion, the best distance thresholds were \textbf{5.5}\% (V1-V9),
-\textbf{3.5}\% (V4), \textbf{4.5}\% (V3-V4), and \textbf{3.5}\% (V4-V5).
-Surprisingly, these analyses revealed that thresholds near 3\% distance
-balance the risks of splitting genomes into separate OTUs and lumping
-species into the same OTU.
+constuct a receiver operator characteristic curve (ROC; \textbf{Figure
+S1}). Because the ROC curve represents a range of possible thresholds
+and sensitivities and specificities, I used two metrics to select the
+best threshold for defining an OTU. First, I identified the thresholds
+where the sensitivity and specificity were most similar to each other.
+For this criterion, the best distance thresholds were \textbf{6.0}\%
+(V1-V9), \textbf{4.5}\% (V4), \textbf{5.5}\% (V3-V4), and \textbf{4.0}\%
+(V4-V5). Second, I identified the distance threshold that resulted in
+the point on the ROC curve that was closest to perfect classification.
+For this criterion, the best distance thresholds were \textbf{5.5}\%
+(V1-V9), \textbf{3.5}\% (V4), \textbf{4.5}\% (V3-V4), and \textbf{3.5}\%
+(V4-V5). Surprisingly, these analyses revealed that thresholds near 3\%
+distance balance the risks of splitting genomes into separate OTUs and
+lumping species into the same OTU.
 
 The results of this analysis demonstrate that there is a significant
 risk of splitting single genomes into multiple bins if too fine of a
@@ -305,20 +305,36 @@ This work was supported, in part, through grants from the NIH to PDS
 
 \includegraphics{../figures/esv_rate.pdf}
 
-\textbf{Figure 1. ESV rate increases as the number of genomes sampled
-per species increases}
+\textbf{Figure 1. The ratio of number of distinct ASVs per copy of the
+\emph{rrn} operon increases for a species as the number of genomes
+sampled increases.} Each point represents a different species and is
+shaded to be 80\% transparent so that when points overlap they become
+darker. The blue line represents a smoothed fit through the data.
 
 \newpage
 
 \includegraphics{../figures/lump_split.pdf}
 
-\textbf{Figure 2. Rate of lumping and splitting by distance threshold}
+\textbf{Figure 2. As the distance threshold used to define an OTU
+increases, the fraction of genomes split into separate OTUs decreases
+while the fraction of species that are merged into the same OTU
+increases.} These data represent the median fractions for both
+measurements across 100 randomizations. In each randomization, one
+genome was sampled from each species.
 
 \newpage
 
 \includegraphics{../figures/roc_curve.pdf}
 
-\textbf{Figure S1. Receiver operator characteristic curve and position
-of various thresholds}
+\textbf{Figure S1. Distance thresholds larger than 3\% provide better
+sensitivity and specificity when assigning ASVs to OTUs when trying to
+represent species-level classifications.} The sensitivities and
+specificities for ASVs were \textbf{0.435/1.000}, \textbf{0.748/1.000},
+\textbf{0.887/0.999}, and \textbf{0.853/0.999} for the V1-V9, V3-V4, V4,
+V4-V5 regions, respectively. The gray diagonal line represents the
+position of where the sensitivity and specificity were equal. These data
+represent the median fractions for sensitivity and specificity across
+100 randomizations. In each randomization, one genome was sampled from
+each species.
 
 \end{document}
