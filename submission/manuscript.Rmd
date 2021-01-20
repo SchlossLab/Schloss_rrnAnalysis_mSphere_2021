@@ -256,3 +256,9 @@ This work was supported, in part, through grants from the NIH to PDS (P30DK03493
 
 **Figure 2. Rate of lumping and splitting by distance threshold**
 
+\newpage
+
+\includegraphics{../figures/roc_curve.pdf}
+
+**Figure S1. Receiver operator characteristic curve and position of various thresholds**
+
