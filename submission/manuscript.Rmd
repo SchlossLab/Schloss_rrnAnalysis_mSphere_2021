@@ -250,3 +250,9 @@ This work was supported, in part, through grants from the NIH to PDS (P30DK03493
 
 **Figure 1. ESV rate increases as the number of genomes sampled per species increases**
 
+\newpage
+
+\includegraphics{../figures/lump_split.pdf}
+
+**Figure 2. Rate of lumping and splitting by distance threshold**
+
