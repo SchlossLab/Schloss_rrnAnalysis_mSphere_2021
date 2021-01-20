@@ -131,11 +131,16 @@ figures/esv_rate.% : code/plot_esv_rate.R\
 		data/processed/rrnDB.easv.count_tibble
 	./code/plot_esv_rate.R
 
+figures/lump_split.% : code/plot_lump_split.R\
+		data/processed/lumped_split_rate.tsv
+	./code/plot_lump_split.R
+
 submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble\
 		data/processed/thresholds_for_single_otu.tsv\
 		data/processed/lumped_split_rate.tsv\
 		data/processed/rrnDB.roc.tsv\
-		figures/esv_rate.pdf
+		figures/esv_rate.pdf\
+		figures/lump_split.pdf
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
