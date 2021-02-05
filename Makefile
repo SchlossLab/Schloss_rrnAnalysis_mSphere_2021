@@ -160,5 +160,7 @@ submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd
 		submission/figure_s1.tiff\
 		figures/esv_rate.pdf\
 		figures/lump_split.pdf\
-		figures/copy_number_threshold_plot.pdf
+		figures/copy_number_threshold_plot.pdf\
+		submission/asm.csl\
+		submission/references.bib
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
