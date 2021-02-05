@@ -12,7 +12,7 @@ read_tsv("data/processed/lumped_split_rate.tsv",
 												 "Fraction of species\nmerged together",
 												 "Fraction of genomes\nsplit apart")) %>%
 	ggplot(aes(x=threshold, y=fraction, color=region)) + 
-	geom_line() +
+	geom_line(size=1) +
 	facet_wrap(~method, nrow=2, strip.position = "left") +
 	scale_x_continuous(
 		breaks = c(0, 0.025, 0.05, 0.075, 0.1),
@@ -26,7 +26,7 @@ read_tsv("data/processed/lumped_split_rate.tsv",
 		strip.background =element_rect(color=NA),
 		strip.text = element_text(size=11),
 		legend.position = c(0.8, 0.9),
-		legend.key.size = unit(0.4, "cm")
+		legend.key.height = unit(0.4, "cm")
 	)
 
 ggsave("figures/lump_split.tiff", height =5, width =4, compression="lzw")

@@ -136,18 +136,18 @@ figures/lump_split.pdf figures/lump_split.tiff: code/plot_lump_split.R\
 		data/processed/lumped_split_rate.tsv
 	./code/plot_lump_split.R
 
-figures/roc_curve.pdf figures/roc_curve.tiff : code/plot_roc_curve.R\
+figures/copy_number_threshold_plot.pdf figures/copy_number_threshold_plot.tiff: code/plot_copy_number_threshold.R\
 		code/colors.R\
-		data/processed/rrndB.roc.tsv
-	./code/plot_roc_curve.R
+		data/processed/thresholds_for_single_otu.tsv
+	./code/plot_copy_number_threshold.R
 
-submission/figure_1.tiff : figures/esv_rate.tiff
+submission/figure_1.tiff : figures/copy_number_threshold_plot.tiff
 	convert -compress lzw $< $@
 
 submission/figure_2.tiff : figures/lump_split.tiff
 	convert -compress lzw $< $@
 
-submission/figure_s1.tiff : figures/roc_curve.tiff
+submission/figure_s1.tiff : figures/esv_rate.tiff
 	convert -compress lzw $< $@
 
 submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
@@ -155,11 +155,10 @@ submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd
 		data/processed/rrnDB.easv.count_tibble\
 		data/processed/thresholds_for_single_otu.tsv\
 		data/processed/lumped_split_rate.tsv\
-		data/processed/rrnDB.roc.tsv\
 		submission/figure_1.tiff\
 		submission/figure_2.tiff\
 		submission/figure_s1.tiff\
 		figures/esv_rate.pdf\
 		figures/lump_split.pdf\
-		figures/roc_curve.pdf
+		figures/copy_number_threshold_plot.pdf
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'

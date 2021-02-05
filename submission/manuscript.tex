@@ -167,54 +167,37 @@ a threshold for defining units of inference that is too narrow because
 it is possible to split a single genome into multiple units.
 
 A method to avoid splitting a single genome into multiple units of
-inference is to cluster 16S rRNA gene sequences together that are
-similar. However, this also increases the risk of lumping together genes
-from different species that are similar to each other. Therefore, I
-assessed the impact of the threshold used to define clusters of 16S rRNA
-genes on the propensity to split a genome apart or to lump species
-together. For full length 16S rRNA gene sequences, I found that at a
-threshold of \textbf{5.5}\%, 95\% of the species with 7 copies of the
-rrn operon would be represented by a single OTU. Similarly, thresholds
-of \textbf{2.5}, \textbf{4.0}, and \textbf{3.5}\% were observed for the
-V4, V3-V4, and V4-V5 regions, respectively. However, at these
-thresholds, multiple species could be represented by the same OTU
-(\textbf{Figure 2}). At the highest level of resolution, \textbf{3.6}\%
-of the species shared a 16S rRNA gene sequence variant with another
-species when considering full length sequences and \textbf{14.9},
-\textbf{10.2}, and \textbf{12.0}\% when considering the V4, V3-V4, and
-V4-V5 regions, respectively. At the commonly used 3\% threshold,
-\textbf{25.2}\% of the species shared an OTU when considering full
-length sequences and \textbf{33.0}, \textbf{29.4}, and \textbf{32.2}\%
-when considering the V4, V3-V4, and V4-V5 regions, respectively. Given
-the risk of splitting a genome into multiple OTUs is more biologically
-problematic than lumping species together, larger thresholds are
-advisable.
+inference is to cluster together similar 16S rRNA gene sequences.
+Therefore, I assessed the impact of the distance threshold used to
+define clusters of 16S rRNA genes on the propensity to split a genome
+into separate clusters. I observed that as the number of copies of the
+\emph{rrn} operon increased, the distance threshold required to reduce
+the ASVs in each genome to a single OTU increased (Figure 1). Among
+species with 7 copies of the \emph{rrn} operon (e.g., \emph{E. coli}), I
+found that a threshold of \textbf{5.5}\% was required to reduce full
+length ASVs to a single OTU in 95\% of the species. Similarly,
+thresholds of \textbf{2.5}, \textbf{4.0}, and \textbf{3.5}\% were
+required for the V4, V3-V4, and V4-V5 regions, respectively. But, if a
+3\% distance threshold was used, then ASVs from genomes containing fewer
+than \textbf{5}, \textbf{8}, \textbf{6}, and \textbf{6} copies of the
+\emph{rrn} operon would reliably be clustered into a single OTU for ASVs
+from the V1-V9, V4, V3-V4, and V4-V5 regions, respectively.
+Consequently, these results demonstrate that broad thresholds must be
+used to avoid splitting different operons from the same genome into
+separate clusters.
 
-To provide a more nuanced approach to selecting a threshold, it would be
-useful to to quantify the sensitivity and specificity of characterizing
-bacterial species using OTUs defined at different thresholds. I created
-confusion matrices for multiple regions of the 16S rRNA gene: true
-positives were those cases where two ASVs were joined in the same OTU
-and the same species; true negatives were those cases where two ASVs
-from different OTUs came from different species; false positives were
-those ASVs that joined the same OTU, but were from different species;
-and false negatives were those ASVs that joined different OTUs, but were
-from the same species. By calculating the sensitivity and specificity
-for each threshold and each region of the 16S rRNA gene, I was able to
-constuct a receiver operator characteristic curve (ROC; \textbf{Figure
-S1}). Because the ROC curve represents a range of possible thresholds
-and sensitivities and specificities, I used two metrics to select the
-best threshold for defining an OTU. First, I identified the thresholds
-where the sensitivity and specificity were most similar to each other.
-For this criterion, the best distance thresholds were \textbf{6.0}\%
-(V1-V9), \textbf{4.5}\% (V4), \textbf{5.5}\% (V3-V4), and \textbf{4.0}\%
-(V4-V5). Second, I identified the distance threshold that resulted in
-the point on the ROC curve that was closest to perfect classification.
-For this criterion, the best distance thresholds were \textbf{5.5}\%
-(V1-V9), \textbf{3.5}\% (V4), \textbf{4.5}\% (V3-V4), and \textbf{3.5}\%
-(V4-V5). Surprisingly, these analyses revealed that thresholds near 3\%
-distance balance the risks of splitting genomes into separate OTUs and
-lumping species into the same OTU.
+At broad thresholds thresholds multiple species could be represented by
+the same OTU (\textbf{Figure 2}). Using ASVs, \textbf{3.6}\% of the
+species shared a 16S rRNA gene sequence variant with another species
+when considering full length sequences and \textbf{14.9}, \textbf{10.2},
+and \textbf{12.0}\% when considering the V4, V3-V4, and V4-V5 regions,
+respectively. At the commonly used 3\% threshold, \textbf{25.2}\% of the
+species shared an OTU when considering full length sequences and
+\textbf{33.0}, \textbf{29.4}, and \textbf{32.2}\% when considering the
+V4, V3-V4, and V4-V5 regions, respectively. Considering that species
+designations are unevenly applied and reflect multiple biases, the risk
+of splitting a genome into multiple OTUs more problematic than
+clustering species together. Therefore, larger thresholds are advisable.
 
 The results of this analysis demonstrate that there is a significant
 risk of splitting single genomes into multiple bins if too fine of a
@@ -303,13 +286,17 @@ This work was supported, in part, through grants from the NIH to PDS
 
 \newpage
 
-\includegraphics{../figures/esv_rate.pdf}
+\includegraphics{../figures/copy_number_threshold_plot.pdf}
 
-\textbf{Figure 1. The ratio of number of distinct ASVs per copy of the
-\emph{rrn} operon increases for a species as the number of genomes
-sampled increases.} Each point represents a different species and is
-shaded to be 80\% transparent so that when points overlap they become
-darker. The blue line represents a smoothed fit through the data.
+\textbf{Figure 1. The distance threshold required to prevent the
+splitting of genomes into multiple OTUs increases as the number of
+\emph{rrn} operons in the genome increases.} Each line represents the
+median distance threshold for each region of the 16S rRNA gene that is
+required for 95\% of the species with the indicated numbrer of
+\emph{rrn} operons to cluster their ASVs to a single OTU. The median
+distance threshold was calculated across 100 randomizations in which one
+genome was sampled from each species. Only those number of \emph{rrn}
+operons that were found in more than 100 species are included.
 
 \newpage
 
@@ -324,17 +311,12 @@ genome was sampled from each species.
 
 \newpage
 
-\includegraphics{../figures/roc_curve.pdf}
+\includegraphics{../figures/esv_rate.pdf}
 
-\textbf{Figure S1. Distance thresholds larger than 3\% provide better
-sensitivity and specificity when assigning ASVs to OTUs when trying to
-represent species-level classifications.} The sensitivities and
-specificities for ASVs were \textbf{0.435/1.000}, \textbf{0.748/1.000},
-\textbf{0.887/0.999}, and \textbf{0.853/0.999} for the V1-V9, V3-V4, V4,
-V4-V5 regions, respectively. The gray diagonal line represents the
-position of where the sensitivity and specificity were equal. These data
-represent the median fractions for sensitivity and specificity across
-100 randomizations. In each randomization, one genome was sampled from
-each species.
+\textbf{Figure S1. The ratio of number of distinct ASVs per copy of the
+\emph{rrn} operon increases for a species as the number of genomes
+sampled increases.} Each point represents a different species and is
+shaded to be 80\% transparent so that when points overlap they become
+darker. The blue line represents a smoothed fit through the data.
 
 \end{document}
