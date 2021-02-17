@@ -28,7 +28,7 @@ opts_chunk$set(echo = FALSE)
 inline_hook <- function(x){
 
 	if(is.numeric(x)){
-		if(abs(x - round(x) < .Machine$double.eps)){
+		if(abs(x - round(x)) < .Machine$double.eps){
 			# treat as integer
 			formatted <- format(x, digits=0, big.mark = ",")
 
@@ -55,12 +55,12 @@ format_pct <- function(x, my_digits=1){
 }
 ```
 
-# Amplicon sequence variants should not replace operational taxonomic units in marker-gene data analysis
+# Amplicon sequence variants artificially split bacterial genomes into separate units of inference
 
 
 \vspace{20mm}
 
-**Running title:** ASVs vs. OTUs
+**Running title:** ASVs artificially split bacterial genomes
 
 \vspace{20mm}
 
@@ -85,16 +85,8 @@ Ann Arbor, MI 48109
 
 \newpage
 
-
-## Abstract (250 words)
-
-## Importance (150 words)
-
-\newpage
-
-16S rRNA gene sequencing is a powerful technique for describing and comparing microbial communities [@Lane1985]. Efforts to link 16S rRNA gene sequences to taxonomic levels based on distance thresholds go back to at least the 1990s. The distance-based thresholds that were developed and are now widely used (3%) were based on DNA-DNA hybridization approaches that are not as precise as genome sequencing [@Stackebrandt1994; @Goris2007]. Instead, genome sequencing technologies have suggested that the widely used 3% distance threshold to operationally define bacterial taxa is too coarse [@RodriguezR2018; @Stackebrandt2006; @Edgar2018]. As an alternative to OTUs, amplicon sequencing variants (ASVs) have been proposed as a way to adopt the thresholds suggested by genome sequencing to microbial community analysis using 16S rRNA gene sequences [@Edgar2016; @Amir2017; @Callahan2016; @Eren2014]. ASVs are a unit of microbial community inference that do not cluster sequences based on a distance-based threshold [@Callahan2017]. However, most bacterial genomes have more than 1 copy of the rrn operon and those copies are not identical [@Pei2010; @Sun2013]. Therefore, using too fine a threshold to identify OTUs creates the risk of splitting a single genome into multiple bins and using too broad of a threshold to define OTUs creates the risk of lumping together bacterial species into the same OTU. An example of both is seen in the comparison of *Staphylococcus aureus* (NCTC 8325) and *S. epidermidis* (ATCC 12228) where each genome has 5 copies of the 16S rRNA gene. The 10 copies of the 16S rRNA gene each have a different sequence and so if OTUs are defined based on ASVs, each genome would be split into 5 OTUs. Conversely, if the copies were clustered using a 3% distance threshold all 10 copies would cluster into the same OTU. The goal of this study was to quantify the risk of splitting a single genome into multiple bins and the risk of lumping together different bacterial species into the same bin.
-
 ```{r}
+## Paragraph 1
 metadata <- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
 										 col_types = cols(.default = col_character()))
 
@@ -142,11 +134,8 @@ asvs_per_species <- metadata_easv %>%
 
 single_nasvs <- asvs_per_species %>% filter(species == single_copy$species) %>% pull(n_asvs)
 ecoli_nasvs <- asvs_per_species %>% filter(species == "Escherichia coli") %>% pull(n_asvs)
-```
 
-To investigate the variation in the number of copies of the 16S rRNA gene per genome as well as the intragenomic variation among copies of the 16S rRNA gene, I obtained reference 16S rRNA sequences from the rrn copy number database (rrnDB)[@Stoddard2014]. Among the `r n_distinct(metadata$species)` species represented in the rrnDB there were `r nrow(metadata)` genomes. The median number of rrn operson per species ranged between `r single_copy$median` (e.g., *`r single_copy$species`*) and `r max_copy$median` (*`r max_copy$species`*) copies of the rrn operon. As the number of copies of the operon in a genome increased, the number of variants of the 16S rRNA gene in each genome also increased. On average, there were `r rate_v19` variants per copy of the full length 16S rRNA gene and an average of `r rate_v4`, `r rate_v34`, and `r rate_v45` variants when considering the V4, V3-V4, and V4-V5 regions of the gene, respectively. Although a species tended to have a consistent number of 16S rRNA gene copies per genome, the number of total variants increased with the number of genomes that were sampled (**Figure 1**). For example, *`r single_copy$species`* generally only had `r single_copy$median` copy of the gene per genome, but across the `r single_copy_N` genomes that have been sequenced there were `r single_nasvs` versions of the gene. Similarly, a *E. coli* genome typically had `r ecoli_copy$median` copies of the 16S rRNA gene with between `r ecoli_copy$min` and `r ecoli_copy$max` distinct full length sequences per genome. Across the `r ecoli_copy$N` *E. coli* genomes that have been sequenced, there were `r ecoli_nasvs` different variants of the gene. These observations highlight the risk of selecting a threshold for defining units of inference that is too narrow because it is possible to split a single genome into multiple units.
-
-```{r}
+## Paragraph 2
 thresholds <- read_tsv(here("data/processed/thresholds_for_single_otu.tsv"),
 											 col_types=cols(region = col_character(),
 											 							 .default = col_double())) %>%
@@ -162,12 +151,9 @@ three_v19 <- thresholds %>% filter(threshold <= 0.03 & region == "v19") %>% tail
 three_v4 <- thresholds %>% filter(threshold <= 0.03 & region == "v4") %>% tail(n=1) %>% pull(n_rrns)
 three_v34 <- thresholds %>% filter(threshold <= 0.03 & region == "v34") %>% tail(n=1) %>% pull(n_rrns)
 three_v45 <- thresholds %>% filter(threshold <= 0.03 & region == "v45") %>% tail(n=1) %>% pull(n_rrns)
-```
-
-A method to avoid splitting a single genome into multiple units of inference is to cluster together similar 16S rRNA gene sequences. Therefore, I assessed the impact of the distance threshold used to define clusters of 16S rRNA genes on the propensity to split a genome into separate clusters. I observed that as the number of copies of the *rrn* operon increased, the distance threshold required to reduce the ASVs in each genome to a single OTU increased (Figure 1). Among species with 7 copies of the *rrn* operon (e.g., *E. coli*), I found that a threshold of `r format_pct(threshold_v19)`% was required to reduce full length ASVs to a single OTU in 95% of the species. Similarly, thresholds of `r format_pct(threshold_v4)`, `r format_pct(threshold_v34)`, and `r format_pct(threshold_v45)`% were required for the V4, V3-V4, and V4-V5 regions, respectively. But, if a 3% distance threshold was used, then ASVs from genomes containing fewer than `r three_v19`, `r three_v4`, `r three_v34`, and `r three_v45` copies of the *rrn* operon would reliably be clustered into a single OTU for ASVs from the V1-V9, V4, V3-V4, and V4-V5 regions, respectively. Consequently, these results demonstrate that broad thresholds must be used to avoid splitting different operons from the same genome into separate clusters.
 
 
-```{r}
+## Paragraph 3
 lump_split <- read_tsv(here("data/processed/lumped_split_rate.tsv"),
 											 col_types = cols(region = col_character(),
 											 								 .default = col_double()))
@@ -182,6 +168,25 @@ lump3_v4 <- lump_split %>% filter(threshold ==0.03 & region == "v4") %>% pull(lu
 lump3_v34 <- lump_split %>% filter(threshold ==0.03 & region == "v34") %>% pull(lump_rate) * 100
 lump3_v45 <- lump_split %>% filter(threshold ==0.03 & region == "v45") %>% pull(lump_rate) * 100
 ```
+
+## Abstract
+
+Amplicon sequencing variants (ASVs) have been proposed as an alternative to operational taxonomic units (OTUs) for analyzing microbiomes. ASVs have grown in popularity, in part, because of a desire to reflect a more refined level of taxonomy because they do not cluster sequences based on a distance-based threshold. However, ASVs and the use of overly narrow thresholds to identify OTUs increases the risk of splitting a single genome into separate clusters. I addressed this problem by analyzing the intragenomic variation of 16S rRNA genes from the bacterial genomes represented in the rrn copy number database, which contained `r nrow(metadata)` genomes from `r n_distinct(metadata$species)` species. The analysis confirmed the severity of this risk. As the number of copies of the 16S rRNA gene increased in a genome, the number of ASVs also increased. For full length 16S rRNA genes, there was an average of `r rate_v19` ASVs per copy of the 16S rRNA gene. Among genomes with 7 copies of the 16S rRNA, such as *E. coli*, it was necessary to use a distance threshold of `r format_pct(threshold_v19)`% to cluster the ASVs from the same genome into a single OTU. This research highlights the risk of splitting a single bacterial genome into separate clusters when ASVs are used to analyze 16S rRNA gene sequence data. Although there is also a risk of clustering different species into the same OTU, the effects of those risks on biological inferences are less than those from artificially splitting a genome into separate ASVs and OTUs.
+
+
+## Importance
+
+16S rRNA gene sequencing has propelled significant interest into host-associated and environmental microbiomes. There is a tension between trying to classify 16S rRNA gene sequences to increasingly lower taxonomic levels and the reality that those levels were defined using more sequence and physiological information than is available from a fragment of the 16S rRNA gene. Furthermore, naming of bacterial taxa reflects the biases of those who name them. One motivation for the recent push to adopt ASVs in place of OTUs in microbiome analyses is to allow researchers to perform their analyes at the finest possible level that reflects species-level taxonomy. The current research is significant because it quantifies the risk of artificially splitting bacterial genomes into separate clusters. Far from providing a better represenation of microbiomes, the ASV approach could lead to conflicting inferences about the ecology of different clusters from the same genome.
+
+
+
+\newpage
+
+16S rRNA gene sequencing is a powerful technique for describing and comparing microbial communities [@Lane1985]. Efforts to link 16S rRNA gene sequences to taxonomic levels based on distance thresholds go back to at least the 1990s. The distance-based thresholds that were developed and are now widely used (3%) were based on DNA-DNA hybridization approaches that are not as precise as genome sequencing [@Stackebrandt1994; @Goris2007]. Instead, genome sequencing technologies have suggested that the widely used 3% distance threshold to operationally define bacterial taxa is too coarse [@RodriguezR2018; @Stackebrandt2006; @Edgar2018]. As an alternative to OTUs, amplicon sequencing variants (ASVs) have been proposed as a way to adopt the thresholds suggested by genome sequencing to microbial community analysis using 16S rRNA gene sequences [@Edgar2016; @Amir2017; @Callahan2016; @Eren2014]. ASVs are a unit of microbial community inference that do not cluster sequences based on a distance-based threshold [@Callahan2017]. However, most bacterial genomes have more than 1 copy of the rrn operon and those copies are not identical [@Pei2010; @Sun2013]. Therefore, using too fine a threshold to identify OTUs creates the risk of splitting a single genome into multiple bins and using too broad of a threshold to define OTUs creates the risk of lumping together bacterial species into the same OTU. An example of both is seen in the comparison of *Staphylococcus aureus* (NCTC 8325) and *S. epidermidis* (ATCC 12228) where each genome has 5 copies of the 16S rRNA gene. The 10 copies of the 16S rRNA gene each have a different sequence and so if OTUs are defined based on ASVs, each genome would be split into 5 OTUs. Conversely, if the copies were clustered using a 3% distance threshold all 10 copies would cluster into the same OTU. The goal of this study was to quantify the risk of splitting a single genome into multiple bins and the risk of lumping together different bacterial species into the same bin.
+
+To investigate the variation in the number of copies of the 16S rRNA gene per genome as well as the intragenomic variation among copies of the 16S rRNA gene, I obtained reference 16S rRNA sequences from the rrn copy number database (rrnDB)[@Stoddard2014]. Among the `r n_distinct(metadata$species)` species represented in the rrnDB there were `r nrow(metadata)` genomes. The median number of rrn operson per species ranged between `r single_copy$median` (e.g., *`r single_copy$species`*) and `r max_copy$median` (*`r max_copy$species`*) copies of the rrn operon. As the number of copies of the operon in a genome increased, the number of variants of the 16S rRNA gene in each genome also increased. On average, there were `r rate_v19` variants per copy of the full length 16S rRNA gene and an average of `r rate_v4`, `r rate_v34`, and `r rate_v45` variants when considering the V4, V3-V4, and V4-V5 regions of the gene, respectively. Although a species tended to have a consistent number of 16S rRNA gene copies per genome, the number of total variants increased with the number of genomes that were sampled (**Figure 1**). For example, *`r single_copy$species`* generally only had `r single_copy$median` copy of the gene per genome, but across the `r single_copy_N` genomes that have been sequenced there were `r single_nasvs` versions of the gene. Similarly, a *E. coli* genome typically had `r ecoli_copy$median` copies of the 16S rRNA gene with between `r ecoli_copy$min` and `r ecoli_copy$max` distinct full length sequences per genome. Across the `r ecoli_copy$N` *E. coli* genomes that have been sequenced, there were `r ecoli_nasvs` different variants of the gene. These observations highlight the risk of selecting a threshold for defining units of inference that is too narrow because it is possible to split a single genome into multiple units.
+
+A method to avoid splitting a single genome into multiple units of inference is to cluster together similar 16S rRNA gene sequences. Therefore, I assessed the impact of the distance threshold used to define clusters of 16S rRNA genes on the propensity to split a genome into separate clusters. I observed that as the number of copies of the *rrn* operon increased, the distance threshold required to reduce the ASVs in each genome to a single OTU increased (Figure 1). Among species with 7 copies of the *rrn* operon (e.g., *E. coli*), I found that a threshold of `r format_pct(threshold_v19)`% was required to reduce full length ASVs to a single OTU in 95% of the species. Similarly, thresholds of `r format_pct(threshold_v4)`, `r format_pct(threshold_v34)`, and `r format_pct(threshold_v45)`% were required for the V4, V3-V4, and V4-V5 regions, respectively. But, if a 3% distance threshold was used, then ASVs from genomes containing fewer than `r three_v19`, `r three_v4`, `r three_v34`, and `r three_v45` copies of the *rrn* operon would reliably be clustered into a single OTU for ASVs from the V1-V9, V4, V3-V4, and V4-V5 regions, respectively. Consequently, these results demonstrate that broad thresholds must be used to avoid splitting different operons from the same genome into separate clusters.
 
 At broad thresholds multiple species could be represented by the same OTU (**Figure 2**). Using ASVs, `r format_pct(lump_v19)`% of the species shared a 16S rRNA gene sequence variant with another species when considering full length sequences and `r format_pct(lump_v4)`, `r format_pct(lump_v34)`, and `r format_pct(lump_v45)`% when considering the V4, V3-V4, and V4-V5 regions, respectively. At the commonly used 3% threshold, `r format_pct(lump3_v19)`% of the species shared an OTU when considering full length sequences and `r format_pct(lump3_v4)`, `r format_pct(lump3_v34)`, and `r format_pct(lump3_v45)`% when considering the V4, V3-V4, and V4-V5 regions, respectively. Considering that species designations are unevenly applied and reflect multiple biases, the risk of splitting a genome into multiple OTUs more problematic than clustering species together. Therefore, larger thresholds are advisable.
 

@@ -77,14 +77,14 @@
 
 \begin{document}
 
-\hypertarget{amplicon-sequence-variants-should-not-replace-operational-taxonomic-units-in-marker-gene-data-analysis}{%
-\section{Amplicon sequence variants should not replace operational
-taxonomic units in marker-gene data
-analysis}\label{amplicon-sequence-variants-should-not-replace-operational-taxonomic-units-in-marker-gene-data-analysis}}
+\hypertarget{amplicon-sequence-variants-artificially-split-bacterial-genomes-into-separate-units-of-inference}{%
+\section{Amplicon sequence variants artificially split bacterial genomes
+into separate units of
+inference}\label{amplicon-sequence-variants-artificially-split-bacterial-genomes-into-separate-units-of-inference}}
 
 \vspace{20mm}
 
-\textbf{Running title:} ASVs vs.~OTUs
+\textbf{Running title:} ASVs artificially split bacterial genomes
 
 \vspace{20mm}
 
@@ -108,11 +108,49 @@ Ann Arbor, MI 48109
 
 \newpage
 
-\hypertarget{abstract-250-words}{%
-\subsection{Abstract (250 words)}\label{abstract-250-words}}
+\hypertarget{abstract}{%
+\subsection{Abstract}\label{abstract}}
 
-\hypertarget{importance-150-words}{%
-\subsection{Importance (150 words)}\label{importance-150-words}}
+Amplicon sequencing variants (ASVs) have been proposed as an alternative
+to operational taxonomic units (OTUs) for analyzing microbiomes. ASVs
+have grown in popularity, in part, because of a desire to reflect a more
+refined level of taxonomy because they do not cluster sequences based on
+a distance-based threshold. However, ASVs and the use of overly narrow
+thresholds to identify OTUs increases the risk of splitting a single
+genome into separate clusters. I addressed this problem by analyzing the
+intragenomic variation of 16S rRNA genes from the bacterial genomes
+represented in the rrn copy number database, which contained
+\textbf{15,614} genomes from \textbf{4,774} species. The analysis
+confirmed the severity of this risk. As the number of copies of the 16S
+rRNA gene increased in a genome, the number of ASVs also increased. For
+full length 16S rRNA genes, there was an average of \textbf{0.60} ASVs
+per copy of the 16S rRNA gene. Among genomes with 7 copies of the 16S
+rRNA, such as \emph{E. coli}, it was necessary to use a distance
+threshold of \textbf{5.5}\% to cluster the ASVs from the same genome
+into a single OTU. This research highlights the risk of splitting a
+single bacterial genome into separate clusters when ASVs are used to
+analyze 16S rRNA gene sequence data. Although there is also a risk of
+clustering different species into the same OTU, the effects of those
+risks on biological inferences are less than those from artificially
+splitting a genome into separate ASVs and OTUs.
+
+\hypertarget{importance}{%
+\subsection{Importance}\label{importance}}
+
+16S rRNA gene sequencing has propelled significant interest into
+host-associated and environmental microbiomes. There is a tension
+between trying to classify 16S rRNA gene sequences to increasingly lower
+taxonomic levels and the reality that those levels were defined using
+more sequence and physiological information than is available from a
+fragment of the 16S rRNA gene. Furthermore, naming of bacterial taxa
+reflects the biases of those who name them. One motivation for the
+recent push to adopt ASVs in place of OTUs in microbiome analyses is to
+allow researchers to perform their analyes at the finest possible level
+that reflects species-level taxonomy. The current research is
+significant because it quantifies the risk of artificially splitting
+bacterial genomes into separate clusters. Far from providing a better
+represenation of microbiomes, the ASV approach could lead to conflicting
+inferences about the ecology of different clusters from the same genome.
 
 \newpage
 
@@ -154,8 +192,8 @@ number of rrn operson per species ranged between \textbf{1} (e.g.,
 (\textbf{\emph{Metabacillus litoralis}}) copies of the rrn operon. As
 the number of copies of the operon in a genome increased, the number of
 variants of the 16S rRNA gene in each genome also increased. On average,
-there were \textbf{1} variants per copy of the full length 16S rRNA gene
-and an average of \textbf{0.26}, \textbf{0.33}, and \textbf{0.27}
+there were \textbf{0.60} variants per copy of the full length 16S rRNA
+gene and an average of \textbf{0.26}, \textbf{0.33}, and \textbf{0.27}
 variants when considering the V4, V3-V4, and V4-V5 regions of the gene,
 respectively. Although a species tended to have a consistent number of
 16S rRNA gene copies per genome, the number of total variants increased
