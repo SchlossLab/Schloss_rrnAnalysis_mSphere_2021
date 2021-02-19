@@ -74,7 +74,7 @@
         <text variable="container-title"/>
       </if>
       <else>
-        <text variable="container-title" form="short" strip-periods="true" prefix=". "/>
+        <text variable="container-title" form="short" strip-periods="true" prefix=". " font-style="italic"/>
       </else>
     </choose>
   </macro>
@@ -107,14 +107,14 @@
       <if type="article-journal">
         <choose>
           <if match="none" variable="volume page">
-            <text variable="DOI" prefix=" https://doi.org/"/>
+            <text variable="DOI" prefix=". doi: "/>
           </if>
           <else>
             <group prefix=" " delimiter=":">
               <text variable="volume"/>
               <text variable="page"/>
             </group>
-            <text variable="DOI" prefix=" https://doi.org/"/>
+            <text variable="DOI" prefix=". doi: "/>
           </else>
         </choose>
       </if>
