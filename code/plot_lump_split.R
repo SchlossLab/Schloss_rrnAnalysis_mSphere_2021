@@ -9,16 +9,16 @@ read_tsv("data/processed/lumped_split_rate.tsv",
 	select(-ends_with("iqr")) %>%
 	pivot_longer(cols=c(split_rate, lump_rate), names_to="method", values_to="fraction") %>%
 	mutate(method = ifelse(method == "lump_rate",
-												 "Fraction of species\nmerged together",
-												 "Fraction of genomes\nsplit apart")) %>%
-	ggplot(aes(x=threshold, y=fraction, color=region)) + 
+												 "Fraction of genomes from\ndifferent species whose ASVs\nwere merged into the same cluster",
+												 "Fraction of genomes split\ninto separate clusters")) %>%
+	ggplot(aes(x=threshold, y=fraction, color=region)) +
 	geom_line(size=1) +
 	facet_wrap(~method, nrow=2, strip.position = "left") +
 	scale_x_continuous(
 		breaks = c(0, 0.025, 0.05, 0.075, 0.1),
 		labels=c("0", "2.5", "5", "7.5", "10")
-		) + 
-	custom_color_scale() + 
+		) +
+	custom_color_scale() +
 	labs(x="Distance theshold\nto define ASV/OTU (%)", y=NULL) +
 	theme_classic() +
 	theme(

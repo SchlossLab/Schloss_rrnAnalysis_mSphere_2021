@@ -12,7 +12,7 @@ read_tsv("data/processed/thresholds_for_single_otu.tsv") %>%
 	scale_x_continuous(breaks=seq(1,9,2), labels=seq(1,9,2)) +
 	scale_y_continuous(breaks=seq(0,0.06,0.02), labels=seq(0,6,2), limits =c(0,0.06)) +
 	labs(x="Number of copies of *rrn* operon",
-			 y="Distance threshold where ASVs from\n95% of species have one OTU (%)") +
+			 y="Distance threshold where ASVs from\n95% of species had one OTU (%)") +
 	theme_classic() +
 	theme(
 		legend.position = c(0.8, 0.2),

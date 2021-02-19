@@ -36,7 +36,7 @@ species_esvs <- metadata_esv %>%
 facet_label <- species_esvs %>%
 	distinct(region) %>%
 	mutate(x = 1, y=100)
-	
+
 
 species_esvs %>%
 	ggplot(aes(x=n_genomes, y=esv_rate)) +
@@ -58,5 +58,5 @@ species_esvs %>%
 		axis.title.y = element_markdown()
 	)
 
-ggsave("figures/esv_rate.tiff", width=3.5, height=8, compression="lzw")
-ggsave("figures/esv_rate.pdf", width=3.5, height=8)
+ggsave("figures/esv_rate.tiff", width=3.5, height=7.5, compression="lzw")
+ggsave("figures/esv_rate.pdf", width=3.5, height=7.5)
