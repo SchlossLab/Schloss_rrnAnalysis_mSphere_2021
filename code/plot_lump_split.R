@@ -8,9 +8,13 @@ read_tsv("data/processed/lumped_split_rate.tsv",
 				 								 .default = col_double())) %>%
 	select(-ends_with("iqr")) %>%
 	pivot_longer(cols=c(split_rate, lump_rate), names_to="method", values_to="fraction") %>%
-	mutate(method = ifelse(method == "lump_rate",
-												 "Fraction of genomes from\ndifferent species whose ASVs\nwere clustered together",
-												 "Fraction of genomes\nsplit into separate OTUs")) %>%
+	mutate(method = factor(ifelse(method == "lump_rate",
+												 "Fraction of ASVs or OTUs\nthat included sequences\nfrom multiple species",
+												 "Fraction of genomes\nsplit into separate OTUs"),
+											 levels=c("Fraction of genomes\nsplit into separate OTUs",
+											 "Fraction of ASVs or OTUs\nthat included sequences\nfrom multiple species")
+									 )
+								 ) %>%
 	ggplot(aes(x=threshold, y=fraction, color=region)) +
 	geom_line(size=1) +
 	facet_wrap(~method, nrow=2, strip.position = "left") +
