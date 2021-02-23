@@ -48,7 +48,7 @@ inline_hook <- function(x){
 
 knit_hooks$set(inline=inline_hook)
 
-format_pct <- function(x, my_digits=1){
+format_pct <- function(x, my_digits=2){
 
 	format(x, digits=my_digits, nsmall=my_digits)
 
@@ -211,11 +211,11 @@ The results of this analysis demonstrate that there is a significant risk of spl
 
 \vspace{20mm}
 
-**Materials and Methods. (i) Data availability.** The 16S rRNA gene sequences used in this study were obtained from the *rrn*DB (https://rrndb.umms.med.umich.edu; version 5.6, released November 8, 2019) [@Stoddard2014]. At the time of submission, this was the most current version of the database. The *rrn*DB obtained the curated 16S rRNA gene sequences from the KEGG database, which ultimately obtained them from NCBI's non-redundant RefSeq database. The *rrn*DB provided downloadable versions of the sequences with their taxonomy as determined using the naive Bayesian classifier trained on the RDP reference taxonomy. For some genomes this resulted in multiple classifications since a genome's 16S rRNA gene sequences were not identical. Instead, I mapped the RefSeq accession number for each genome in the database to obtain a single taxonomy for each genome. Because strain names were not consistently given to genomes across bacterial species, I disregarded the strain level designations.
+**Materials and Methods. (i) Data availability.** The 16S rRNA gene sequences used in this study were obtained from the *rrn*DB (https://rrndb.umms.med.umich.edu; version 5.7, released January 18, 2021) [@Stoddard2014]. At the time of submission, this was the most current version of the database. The *rrn*DB obtained the curated 16S rRNA gene sequences from the KEGG database, which ultimately obtained them from NCBI's non-redundant RefSeq database. The *rrn*DB provided downloadable versions of the sequences with their taxonomy as determined using the naive Bayesian classifier trained on the RDP reference taxonomy. For some genomes this resulted in multiple classifications since a genome's 16S rRNA gene sequences were not identical. Instead, I mapped the RefSeq accession number for each genome in the database to obtain a single taxonomy for each genome. Because strain names were not consistently given to genomes across bacterial species, I disregarded the strain level designations.
 
 **(ii) Definition of regions within the 16S rRNA gene.** The full length 16S rRNA gene sequences were aligned to a SILVA reference alignment of the 16S rRNA gene (v. 138) using the mothur software package (v. 1.44.2) [@Schloss2009; @Quast2012]. Regions of the 16S rRNA gene were selected because of their use in the microbial ecology literature. Full length sequences corresponded to *E. coli* str. K-12 substr. MG1655 (NC_000913) positions 28 through 1491, V4 to positions 534 through 786, V3-V4 to positions 358 through 786, and V4-V5 to positions 534 through 908. The positions between these coordinates reflect the fragments that would be amplified using commonly used PCR primers.
 
-**(iii) Clustering sequences into OTUs.** Pairwise distances between sequences were calculated using the dist.seqs command from mothur. The OptiClust algorithm as implemented in mothur was used to assign 16S rRNA gene sequences to OTUs [@Westcott2017]. Distance thresholds between 0.5 and 10.0% in 0.5 percentage point increments were used to assign sequences to OTUs.
+**(iii) Clustering sequences into OTUs.** Pairwise distances between sequences were calculated using the dist.seqs command from mothur. The OptiClust algorithm as implemented in mothur was used to assign 16S rRNA gene sequences to OTUs [@Westcott2017]. Distance thresholds between 0.25 and 10.0% in 0.25 percentage point increments were used to assign sequences to OTUs.
 
 **(iv) Controlling for uneven sampling of genomes by species.** Because of the uneven distribution of genome sequences across species, for the analysis of splitting genomes and clustering ASVs from different species, I randomly selected one genome from each species. The random selection was repeated 100 times. Analyses based on this randomization reported the median of the 100 randomizations. The intraquartile range between randomizations was less than `r lump_split_iqr`. Because the range was so small, the confidence intervals were more narrow than the thickness of the lines in Figures 1 and 2 and were not included.
 

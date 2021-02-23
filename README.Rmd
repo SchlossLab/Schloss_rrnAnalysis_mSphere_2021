@@ -1,19 +1,159 @@
 ---
-title: "Code Club Project: Assessing whether intra and inter-genomic variation hinder utility of ESVs and ASVs"
+title: "Amplicon sequence variants artificially split bacterial genomes into separate clusters"
 author: "Pat Schloss"
-date: "9/11/2020"
+date: "2/22/2021"
 output:
   github_document:
     html_preview: false
 ---
 
-Developed over a series of *Code Club* episodes led by Pat Schloss to answer an important question in microbiology and develop comfort using tools to develop reproducible research practices.
+```{r, echo=FALSE}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(here))
+
+opts_chunk$set(echo = FALSE)
+
+inline_hook <- function(x){
+
+	if(is.numeric(x)){
+		if(abs(x - round(x)) < .Machine$double.eps){
+			# treat as integer
+			formatted <- format(x, digits=0, big.mark = ",")
+
+		} else {
+			# treat as floating point number
+			formatted <- format(x, digits=2, nsmall=2, big.mark = ",")
+		}
+	} else {
+		formatted <-x
+	}
+
+	paste0("**", formatted, "**")
 
 
-## Questions
-* Within a genome, how many distinct sequences of the 16S rRNA gene are present relative to the number of copies per genome? How far apart are these sequences from each other? How does this scale from a genome to kingdoms?
-* Within a taxa (any level), how many ESVs or ASVs from that taxa are shared with sister taxa? How does this change with taxonomic level? Variable region?
+}
 
+
+knit_hooks$set(inline=inline_hook)
+
+format_pct <- function(x, my_digits=1){
+
+	format(x, digits=my_digits, nsmall=my_digits)
+
+}
+```
+
+```{r}
+## Paragraph 1
+metadata <- read_tsv(here("data/references/genome_id_taxonomy.tsv"),
+										 col_types = cols(.default = col_character()))
+
+easv <- read_tsv(here("data/processed/rrnDB.easv.count_tibble"),
+								col_types = cols(.default = col_character(),
+																 count = col_integer()))
+
+metadata_easv <- inner_join(metadata, easv, by=c("genome_id" = "genome")) %>%
+	mutate(threshold = recode(threshold, "esv" = "0.000"),
+				 threshold = as.numeric(threshold))
+
+rrn_copy_number <- metadata_easv %>%
+	filter(region == "v19", threshold == 0) %>%
+	group_by(species, genome_id) %>%
+	summarize(n_rrn = sum(count), n_asv = n(), .groups="drop") %>%
+	group_by(species) %>%
+	summarize(min_rrn = min(n_rrn),
+            l_quartile_rrn = quantile(n_rrn, prob=0.25),
+            median_rrn = median(n_rrn),
+            u_quartile_rrn = quantile(n_rrn, prob=0.75),
+            max_rrn = max(n_rrn),
+            min_asv = min(n_asv),
+            l_quartile_asv = quantile(n_asv, prob=0.25),
+            median_asv = median(n_asv),
+            u_quartile_asv = quantile(n_asv, prob=0.75),
+            max_asv = max(n_asv),
+            N=n(),
+            .groups="drop")
+
+single_copy <- rrn_copy_number %>% filter(median_rrn == 1) %>% top_n(n=1, N)
+
+stopifnot(single_copy$min_rrn == single_copy$max_rrn)
+
+max_copy <- rrn_copy_number %>% top_n(n=1, median_rrn)
+
+single_copy_N <- single_copy %>% pull(N)
+#max_copy_N <- max_copy %>% pull(N)
+
+ecoli_copy <- rrn_copy_number %>% filter(species == "Escherichia coli")
+
+
+
+rates <- metadata_easv %>%
+	filter(threshold == 0) %>%
+	group_by(region, genome_id) %>%
+	summarize(n_rrns = sum(count), n_asvs = n_distinct(easv), .groups="drop") %>%
+	group_by(region) %>%
+	summarize(rate = sum(n_asvs)/sum(n_rrns), .groups="drop")
+
+rate_v19 <- rates %>% filter(region == "v19") %>% pull(rate)
+rate_v4 <- rates %>% filter(region == "v4") %>% pull(rate)
+rate_v34 <- rates %>% filter(region == "v34") %>% pull(rate)
+rate_v45 <- rates %>% filter(region == "v45") %>% pull(rate)
+
+
+asvs_per_species <- metadata_easv %>%
+	filter(threshold == 0 & region == "v19") %>%
+	group_by(species) %>%
+	summarize(n_asvs = n_distinct(easv), .groups="drop")
+
+#below are total number of ASVs across all genomes (above was within a genome)
+single_nasvs <- asvs_per_species %>% filter(species == single_copy$species) %>% pull(n_asvs)
+ecoli_nasvs <- asvs_per_species %>% filter(species == "Escherichia coli") %>% pull(n_asvs)
+
+## Paragraph 2
+thresholds <- read_tsv(here("data/processed/thresholds_for_single_otu.tsv"),
+											 col_types=cols(region = col_character(),
+											 							 .default = col_double())) %>%
+								filter(n_genomes > 100)
+
+threshold_v19 <- thresholds %>% filter(n_rrns == 7 & region == "v19") %>% pull(threshold) * 100
+threshold_v4 <- thresholds %>% filter(n_rrns == 7 & region == "v4") %>% pull(threshold) * 100
+threshold_v34 <- thresholds %>% filter(n_rrns == 7 & region == "v34") %>% pull(threshold) * 100
+threshold_v45 <- thresholds %>% filter(n_rrns == 7 & region == "v45") %>% pull(threshold) * 100
+
+
+three_v19 <- thresholds %>% filter(threshold <= 0.03 & region == "v19") %>% tail(n=1) %>% pull(n_rrns)
+three_v4 <- thresholds %>% filter(threshold <= 0.03 & region == "v4") %>% tail(n=1) %>% pull(n_rrns)
+three_v34 <- thresholds %>% filter(threshold <= 0.03 & region == "v34") %>% tail(n=1) %>% pull(n_rrns)
+three_v45 <- thresholds %>% filter(threshold <= 0.03 & region == "v45") %>% tail(n=1) %>% pull(n_rrns)
+
+
+## Paragraph 3
+lump_split <- read_tsv(here("data/processed/lumped_split_rate.tsv"),
+											 col_types = cols(region = col_character(),
+											 								 .default = col_double()))
+
+lump_v19 <- lump_split %>% filter(threshold ==0 &region == "v19") %>% pull(lump_rate) * 100
+lump_v4 <- lump_split %>% filter(threshold ==0 &region == "v4") %>% pull(lump_rate) * 100
+lump_v34 <- lump_split %>% filter(threshold ==0 &region == "v34") %>% pull(lump_rate) * 100
+lump_v45 <- lump_split %>% filter(threshold ==0 &region == "v45") %>% pull(lump_rate) * 100
+
+lump3_v19 <- lump_split %>% filter(threshold ==0.03 & region == "v19") %>% pull(lump_rate) * 100
+lump3_v4 <- lump_split %>% filter(threshold ==0.03 & region == "v4") %>% pull(lump_rate) * 100
+lump3_v34 <- lump_split %>% filter(threshold ==0.03 & region == "v34") %>% pull(lump_rate) * 100
+lump3_v45 <- lump_split %>% filter(threshold ==0.03 & region == "v45") %>% pull(lump_rate) * 100
+
+lump_split_iqr <- lump_split %>% pivot_longer(cols=c(split_iqr, lump_iqr), names_to="test", values_to="iqr") %>% summarize(max(iqr)) %>% pull
+
+```
+
+## Abstract
+
+Amplicon sequencing variants (ASVs) have been proposed as an alternative to operational taxonomic units (OTUs) for analyzing microbial communities. ASVs have grown in popularity, in part, because of a desire to reflect a more refined level of taxonomy since they do not cluster sequences based on a distance-based threshold. However, ASVs and the use of overly narrow thresholds to identify OTUs increase the risk of splitting a single genome into separate clusters. To assess this risk, I analyzed the intragenomic variation of 16S rRNA genes from the bacterial genomes represented in a *rrn* copy number database, which contained `r nrow(metadata)` genomes from `r n_distinct(metadata$species)` species. As the number of copies of the 16S rRNA gene increased in a genome, the number of ASVs also increased. There was an average of `r rate_v19` ASVs per copy of the 16S rRNA gene for full length 16S rRNA genes. It was necessary to use a distance threshold of `r format_pct(threshold_v19)`% to cluster full length ASVs from the same genome into a single OTU with 95% confidence for genomes with 7 copies of the 16S rRNA, such as *E. coli*. This research highlights the risk of splitting a single bacterial genome into separate clusters when ASVs are used to analyze 16S rRNA gene sequence data. Although there is also a risk of clustering ASVs from different species into the same OTU when using broad distance thresholds, those risks are of less concern than artificially splitting a genome into separate ASVs and OTUs.
+
+## Importance
+
+16S rRNA gene sequencing has engendered significant interest in studying microbial communities. There has been a tension between trying to classify 16S rRNA gene sequences to increasingly lower taxonomic levels and the reality that those levels were defined using more sequence and physiological information than is available from a fragment of the 16S rRNA gene. Furthermore, naming of bacterial taxa reflects the biases of those who name them. One motivation for the recent push to adopt ASVs in place of OTUs in microbial community analyses is to allow researchers to perform their analyes at the finest possible level that reflects species-level taxonomy. The current research is significant because it quantifies the risk of artificially splitting bacterial genomes into separate clusters. Far from providing a better represenation of bacterial taxonomy and biology, the ASV approach can lead to conflicting inferences about the ecology of different ASVs from the same genome.
 
 
 ```{r library_calls, message=FALSE, echo=FALSE}

@@ -10,7 +10,7 @@ read_tsv("data/processed/thresholds_for_single_otu.tsv") %>%
 	geom_line(size=1) +
 	custom_color_scale() +
 	scale_x_continuous(breaks=seq(1,9,2), labels=seq(1,9,2)) +
-	scale_y_continuous(breaks=seq(0,0.06,0.02), labels=seq(0,6,2), limits =c(0,0.06)) +
+	scale_y_continuous(breaks=seq(0,0.08,0.02), labels=seq(0,8,2), limits =c(0,0.08)) +
 	labs(x="Number of copies of *rrn* operon",
 			 y="Distance threshold where ASVs from\n95% of species had one OTU (%)") +
 	theme_classic() +

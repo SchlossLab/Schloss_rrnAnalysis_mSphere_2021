@@ -1,7 +1,7 @@
 .SECONDEXPANSION:
 
 REGIONS=v4 v34 v45 v19
-THRESHOLDS=001 002 003 004 005 008 01 015 02 025 03 035 04 045 05 055 06 065 07 075 08 085 09 095 1
+THRESHOLDS= 0025 005 0075 01 0125 015 0175 02 0225 025 0275 03 0325 035 0375 04 0425 045 0475 05 0525 055 0575 06 0625 065 0675 07 0725 075 0775 08 0825 085 0875 09 0925 095 0975 10
 
 print-% :
 	@echo '$*=$($*)'
@@ -16,16 +16,16 @@ code/mothur/mothur : code/install_mothur.sh
 data/references/silva_seed/silva.seed_v138.align : code/get_silva_seed.sh
 	code/get_silva_seed.sh
 
-data/raw/rrnDB-5.6_16S_rRNA.fasta : code/get_rrndb_files.sh
+data/raw/rrnDB-5.7_16S_rRNA.fasta : code/get_rrndb_files.sh
 	code/get_rrndb_files.sh $@
 
-data/raw/rrnDB-5.6.tsv : code/get_rrndb_files.sh
+data/raw/rrnDB-5.7.tsv : code/get_rrndb_files.sh
 	code/get_rrndb_files.sh $@
 
-data/raw/rrnDB-5.6_pantaxa_stats_NCBI.tsv : code/get_rrndb_files.sh
+data/raw/rrnDB-5.7_pantaxa_stats_NCBI.tsv : code/get_rrndb_files.sh
 	code/get_rrndb_files.sh $@
 
-data/raw/rrnDB-5.6_pantaxa_stats_RDP.tsv : code/get_rrndb_files.sh
+data/raw/rrnDB-5.7_pantaxa_stats_RDP.tsv : code/get_rrndb_files.sh
 	code/get_rrndb_files.sh $@
 
 data/references/ncbi_names_lookup.tsv data/references/ncbi_nodes_lookup.tsv : \
@@ -33,21 +33,21 @@ data/references/ncbi_names_lookup.tsv data/references/ncbi_nodes_lookup.tsv : \
 	code/get_ncbi_tax_lookup.sh
 
 data/references/genome_id_taxonomy.tsv : code/get_genome_id_taxonomy.R\
-		data/raw/rrnDB-5.6.tsv\
+		data/raw/rrnDB-5.7.tsv\
 		data/references/ncbi_nodes_lookup.tsv\
 		data/references/ncbi_names_lookup.tsv\
 		data/references/ncbi_merged_lookup.tsv
 	code/get_genome_id_taxonomy.R
 
-data/raw/rrnDB-5.6_16S_rRNA.align : code/align_sequences.sh\
+data/raw/rrnDB-5.7_16S_rRNA.align : code/align_sequences.sh\
 											data/references/silva_seed/silva.seed_v138.align\
-											data/raw/rrnDB-5.6_16S_rRNA.fasta\
+											data/raw/rrnDB-5.7_16S_rRNA.fasta\
 											code/mothur/mothur
 	code/align_sequences.sh
 
 
 data/%/rrnDB.align data/%/rrnDB.bad.accnos : code/extract_region.sh\
-											data/raw/rrnDB-5.6_16S_rRNA.align\
+											data/raw/rrnDB-5.7_16S_rRNA.align\
 											code/mothur/mothur
 	code/extract_region.sh $@
 

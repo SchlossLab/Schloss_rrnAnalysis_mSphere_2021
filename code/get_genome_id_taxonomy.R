@@ -3,9 +3,9 @@
 # name: get_genome_id_taxonomy.R
 #
 # input: 
-# 	- data/raw/rrnDB-5.6.tsv
+# 	- data/raw/rrnDB-5.7.tsv
 #		- data/references/sp_spp_lookup.tsv
-#		- data/raw/rrnDB-5.6_pantaxa_stats_NCBI.tsv
+#		- data/raw/rrnDB-5.7_pantaxa_stats_NCBI.tsv
 # output: tsv containing the genome id along with taxonomic information
 # 				data/references/genome_id_taxonomy.tsv
 
@@ -17,7 +17,7 @@ merged <- read_delim("data/references/ncbi_merged_lookup.tsv", delim="|",
 	select(-blank)
 
 	
-metadata <- read_tsv("data/raw/rrnDB-5.6.tsv") %>%
+metadata <- read_tsv("data/raw/rrnDB-5.7.tsv") %>%
 		rename(genome_id = `Data source record id`, 
 					 tax_id = `NCBI tax id`,
 					 rdp = `RDP taxonomic lineage`,
