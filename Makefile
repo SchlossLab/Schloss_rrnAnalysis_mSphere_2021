@@ -129,17 +129,17 @@ exploratory : \
 figures/esv_rate.pdf figures/esv_rate.tiff : code/plot_esv_rate.R\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble
-	./code/plot_esv_rate.R
+	code/plot_esv_rate.R
 
 figures/lump_split.pdf figures/lump_split.tiff: code/plot_lump_split.R\
 		code/colors.R\
 		data/processed/lumped_split_rate.tsv
-	./code/plot_lump_split.R
+	code/plot_lump_split.R
 
 figures/copy_number_threshold_plot.pdf figures/copy_number_threshold_plot.tiff: code/plot_copy_number_threshold.R\
 		code/colors.R\
 		data/processed/thresholds_for_single_otu.tsv
-	./code/plot_copy_number_threshold.R
+	code/plot_copy_number_threshold.R
 
 submission/figure_1.tiff : figures/copy_number_threshold_plot.tiff
 	convert -compress lzw $< $@

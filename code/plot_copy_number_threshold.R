@@ -15,7 +15,7 @@ read_tsv("data/processed/thresholds_for_single_otu.tsv") %>%
 			 y="Distance threshold where ASVs from\n95% of species had one OTU (%)") +
 	theme_classic() +
 	theme(
-		legend.position = c(0.8, 0.2),
+		legend.position = c(0.85, 0.15),
 		legend.key.height = unit(0.4, "cm"),
 		axis.title.x = element_markdown(),
 		axis.title.y = element_text(margin=margin(t=0, r=10, b=0, l=0))
