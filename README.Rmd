@@ -29,8 +29,7 @@ inline_hook <- function(x){
 		formatted <-x
 	}
 
-	paste0("**", formatted, "**")
-
+	formatted
 
 }
 
@@ -149,7 +148,7 @@ lump_split_iqr <- lump_split %>% pivot_longer(cols=c(split_iqr, lump_iqr), names
 
 ## Abstract
 
-Amplicon sequencing variants (ASVs) have been proposed as an alternative to operational taxonomic units (OTUs) for analyzing microbial communities. ASVs have grown in popularity, in part, because of a desire to reflect a more refined level of taxonomy since they do not cluster sequences based on a distance-based threshold. However, ASVs and the use of overly narrow thresholds to identify OTUs increase the risk of splitting a single genome into separate clusters. To assess this risk, I analyzed the intragenomic variation of 16S rRNA genes from the bacterial genomes represented in a *rrn* copy number database, which contained `r nrow(metadata)` genomes from `r n_distinct(metadata$species)` species. As the number of copies of the 16S rRNA gene increased in a genome, the number of ASVs also increased. There was an average of `r rate_v19` ASVs per copy of the 16S rRNA gene for full length 16S rRNA genes. It was necessary to use a distance threshold of `r format_pct(threshold_v19)`% to cluster full length ASVs from the same genome into a single OTU with 95% confidence for genomes with 7 copies of the 16S rRNA, such as *E. coli*. This research highlights the risk of splitting a single bacterial genome into separate clusters when ASVs are used to analyze 16S rRNA gene sequence data. Although there is also a risk of clustering ASVs from different species into the same OTU when using broad distance thresholds, those risks are of less concern than artificially splitting a genome into separate ASVs and OTUs.
+Amplicon sequencing variants (ASVs) have been proposed as an alternative to operational taxonomic units (OTUs) for analyzing microbial communities. ASVs have grown in popularity, in part, because of a desire to reflect a more refined level of taxonomy since they do not cluster sequences based on a distance-based threshold. However, ASVs and the use of overly narrow thresholds to identify OTUs increase the risk of splitting a single genome into separate clusters. To assess this risk, I analyzed the intragenomic variation of 16S rRNA genes from the bacterial genomes represented in a *rrn* copy number database, which contained `r nrow(metadata)` genomes from `r n_distinct(metadata$species)` species. As the number of copies of the 16S rRNA gene increased in a genome, the number of ASVs also increased. There was an average of `r rate_v19` ASVs per copy of the 16S rRNA gene for full length 16S rRNA genes. It was necessary to use a distance threshold of `r format_pct(threshold_v19, 2)`% to cluster full length ASVs from the same genome into a single OTU with 95% confidence for genomes with 7 copies of the 16S rRNA, such as *E. coli*. This research highlights the risk of splitting a single bacterial genome into separate clusters when ASVs are used to analyze 16S rRNA gene sequence data. Although there is also a risk of clustering ASVs from different species into the same OTU when using broad distance thresholds, those risks are of less concern than artificially splitting a genome into separate ASVs and OTUs.
 
 ## Importance
 
@@ -172,6 +171,7 @@ library(furrr)
   * `Rcpp` (v. `r packageVersion("Rcpp")`)
   * `furrr` (v. `r packageVersion("furrr")`)
   * `data.table` (v. `r packageVersion("data.table")`)
+  * `here` (v. `r packageVersion("here")`)
   * `rmarkdown` (v. `r packageVersion("rmarkdown")`)
 
 

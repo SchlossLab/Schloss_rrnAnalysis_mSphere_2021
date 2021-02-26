@@ -15,18 +15,18 @@ of overly narrow thresholds to identify OTUs increase the risk of
 splitting a single genome into separate clusters. To assess this risk, I
 analyzed the intragenomic variation of 16S rRNA genes from the bacterial
 genomes represented in a *rrn* copy number database, which contained
-**20,427** genomes from **5,972** species. As the number of copies of
-the 16S rRNA gene increased in a genome, the number of ASVs also
-increased. There was an average of **0.58** ASVs per copy of the 16S
-rRNA gene for full length 16S rRNA genes. It was necessary to use a
-distance threshold of **5.2**% to cluster full length ASVs from the same
-genome into a single OTU with 95% confidence for genomes with 7 copies
-of the 16S rRNA, such as *E. coli*. This research highlights the risk of
-splitting a single bacterial genome into separate clusters when ASVs are
-used to analyze 16S rRNA gene sequence data. Although there is also a
-risk of clustering ASVs from different species into the same OTU when
-using broad distance thresholds, those risks are of less concern than
-artificially splitting a genome into separate ASVs and OTUs.
+20,427 genomes from 5,972 species. As the number of copies of the 16S
+rRNA gene increased in a genome, the number of ASVs also increased.
+There was an average of 0.58 ASVs per copy of the 16S rRNA gene for full
+length 16S rRNA genes. It was necessary to use a distance threshold of
+5.25% to cluster full length ASVs from the same genome into a single OTU
+with 95% confidence for genomes with 7 copies of the 16S rRNA, such as
+*E. coli*. This research highlights the risk of splitting a single
+bacterial genome into separate clusters when ASVs are used to analyze
+16S rRNA gene sequence data. Although there is also a risk of clustering
+ASVs from different species into the same OTU when using broad distance
+thresholds, those risks are of less concern than artificially splitting
+a genome into separate ASVs and OTUs.
 
 ## Importance
 
@@ -50,12 +50,13 @@ inferences about the ecology of different ASVs from the same genome.
 -   [mothur v.1.44.2](https://github.com/mothur/mothur/tree/v.1.44.2) -
     `code/install_mothur.sh` installs mothur
 -   `wget`
--   **R version 4.0.4 (2021-02-15)**
-    -   `tidyverse` (v. **1.3.0**)
-    -   `Rcpp` (v. **1.0.5**)
-    -   `furrr` (v. **0.2.1**)
-    -   `data.table` (v. **1.13.2**)
-    -   `rmarkdown` (v. **2.5**)
+-   R version 4.0.4 (2021-02-15)
+    -   `tidyverse` (v. 1.3.0)
+    -   `Rcpp` (v. 1.0.5)
+    -   `furrr` (v. 0.2.1)
+    -   `data.table` (v. 1.13.2)
+    -   `here` (v. 1.0.1)
+    -   `rmarkdown` (v. 2.5)
 
 ### My computer
 
