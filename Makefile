@@ -150,7 +150,7 @@ submission/figure_2.tiff : figures/lump_split.tiff
 submission/figure_s1.tiff : figures/esv_rate.tiff
 	convert -compress lzw $< $@
 
-submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd\
+submission/manuscript.pdf submission/manuscript.tex submission/manuscript.docx : submission/manuscript.Rmd\
 		data/references/genome_id_taxonomy.tsv\
 		data/processed/rrnDB.easv.count_tibble\
 		data/processed/thresholds_for_single_otu.tsv\
@@ -164,3 +164,11 @@ submission/manuscript.pdf submission/manuscript.docx : submission/manuscript.Rmd
 		submission/asm.csl\
 		submission/references.bib
 	R -e 'library(rmarkdown);render("submission/manuscript.Rmd", output_format="all")'
+
+
+
+submission/track_changes.pdf: submission/manuscript.tex
+	git cat-file -p b502a704edbb4593b951333da32a5181d3cdb698:submission/manuscript.tex > submission/manuscript_old.tex
+	latexdiff submission/manuscript_old.tex submission/manuscript.tex > submission/track_changes.tex
+	pdflatex -output-directory=submission submission/track_changes.tex
+	rm submission/track_changes.aux submission/track_changes.log submission/track_changes.out submission/track_changes.tex submission/manuscript_old.tex

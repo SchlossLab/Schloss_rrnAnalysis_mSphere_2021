@@ -19,7 +19,7 @@ read_tsv("data/processed/lumped_split_rate.tsv",
 		) +
 	custom_color_scale() +
 	labs(
-		x="Distance theshold\nused to define OTUs (%)",
+		x="Distance threshold\nused to define OTUs (%)",
 		y="Percentage of ASVs or OTUs that included\nsequences from multiple species") +
 	theme_classic() +
 	theme(
